@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POST 8 — Kriterijumi Luksuza (Premium) | APEX</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C5A059;
+    --gold-dim: #9a8044;
+    --gold-glow: rgba(197,160,89,0.15);
+    --bg: #060606;
+    --bg2: #0D0D0D;
+    --card: #111111;
+    --card-hover: #161616;
+    --border: #1e1e1e;
+    --border-gold: rgba(197,160,89,0.25);
+    --text: #F5F0E8;
+    --text2: #999;
+    --text3: #555;
+    --green: #4ade80;
+    --red: #f87171;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ═══════════════ TOP BAR ═══════════════ */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 24px;
+    background: rgba(6,6,6,0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+  .topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .topbar-back {
+    color: var(--text2);
+    text-decoration: none;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s;
+  }
+  .topbar-back:hover { color: var(--gold); }
+  .topbar-divider {
+    width: 1px;
+    height: 16px;
+    background: var(--border);
+  }
+  .topbar-title {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text);
+  }
+  .topbar-badge {
+    background: var(--gold);
+    color: #000;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 12px;
+    letter-spacing: 1.5px;
+  }
+
+  /* ═══════════════ HERO ═══════════════ */
+  .hero {
+    text-align: center;
+    padding: 50px 20px 30px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 400px;
+    background: radial-gradient(ellipse, rgba(197,160,89,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(197,160,89,0.1);
+    border: 1px solid var(--border-gold);
+    color: var(--gold);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 6px 16px;
+    border-radius: 20px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(32px, 5vw, 48px);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 10px;
+  }
+  .hero h1 .gold { color: var(--gold); }
+  .hero-sub {
+    color: var(--text2);
+    font-size: 15px;
+    max-width: 560px;
+    margin: 0 auto;
+    line-height: 1.5;
+  }
+
+  /* ═══════════════ MAIN LAYOUT ═══════════════ */
+  .main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px 60px;
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 30px;
+    align-items: start;
+  }
+
+  @media (max-width: 860px) {
+    .main { grid-template-columns: 1fr; }
+  }
+
+  /* ═══════════════ CAROUSEL ═══════════════ */
+  .carousel-wrapper {
+    position: sticky;
+    top: 60px;
+  }
+
+  .carousel-phone {
+    background: var(--bg2);
+    border-radius: 24px;
+    border: 2px solid var(--border);
+    overflow: hidden;
+    box-shadow:
+      0 20px 80px rgba(0,0,0,0.5),
+      0 0 60px rgba(197,160,89,0.04);
+  }
+
+  .phone-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .ph-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), #8B6914);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: #000;
+    letter-spacing: 1px;
+  }
+  .ph-info { flex: 1; }
+  .ph-name {
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .ph-location {
+    font-size: 11px;
+    color: var(--text2);
+  }
+  .ph-dots {
+    color: var(--text2);
+    font-size: 18px;
+    letter-spacing: 2px;
+    cursor: pointer;
+  }
+
+  .carousel-area {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    overflow: hidden;
+    background: #000;
+  }
+
+  .carousel-track {
+    display: flex;
+    width: 600%;
+    height: 100%;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .carousel-slide {
+    width: calc(100% / 6);
+    height: 100%;
+    flex-shrink: 0;
+    background: var(--card); /* placeholder background */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .carousel-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Placeholder Styling for no images */
+  .slide-placeholder {
+    color: var(--text3);
+    font-size: 18px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  /* Slide counter */
+  .slide-counter {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(8px);
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 12px;
+    z-index: 5;
+  }
+
+  /* Nav arrows */
+  .c-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    transition: all 0.2s;
+    opacity: 0;
+  }
+  .carousel-area:hover .c-nav { opacity: 1; }
+  .c-nav:hover { background: rgba(197,160,89,0.4); border-color: var(--gold); }
+  .c-nav.off { opacity: 0 !important; pointer-events: none; }
+  .c-prev { left: 10px; }
+  .c-next { right: 10px; }
+
+  /* IG Actions bar */
+  .ig-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    font-size: 24px;
+  }
+  .ig-actions-left { display: flex; gap: 14px; }
+  .ig-icon {
+    cursor: pointer;
+    transition: transform 0.15s;
+    user-select: none;
+  }
+  .ig-icon:hover { transform: scale(1.15); }
+  .ig-icon.liked { color: var(--red); }
+
+  /* Dots */
+  .ig-dots {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    padding-bottom: 10px;
+  }
+  .ig-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--text3);
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+  .ig-dot.active {
+    background: #3897f0;
+    width: 6px;
+  }
+
+  /* Likes & preview caption */
+  .ig-likes {
+    padding: 0 14px 4px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .ig-caption-preview {
+    padding: 2px 14px 14px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text2);
+  }
+  .ig-caption-preview strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  /* ═══════════════ RIGHT PANEL ═══════════════ */
+  .panel { display: flex; flex-direction: column; gap: 16px; }
+
+  .panel-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  .panel-card:hover { border-color: rgba(255,255,255,0.08); }
+
+  .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .panel-header h3 {
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Slide info cards */
+  .slide-info-list { padding: 8px; }
+  .si-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .si-item:hover { background: var(--card-hover); }
+  .si-item.active {
+    background: rgba(197,160,89,0.08);
+    border: 1px solid var(--border-gold);
+  }
+  .si-num {
+    background: var(--gold);
+    color: #000;
+    font-size: 11px;
+    font-weight: 700;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .si-title {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+  .si-desc {
+    font-size: 12px;
+    color: var(--text2);
+    line-height: 1.4;
+  }
+
+  /* Caption card */
+  .caption-body { padding: 16px 18px; }
+  .caption-text {
+    font-size: 13.5px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    user-select: all;
+  }
+  .caption-text .gold { color: var(--gold); }
+
+  .hashtags-area {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+  .hashtags-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text3);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .hashtags-text {
+    font-size: 12.5px;
+    color: var(--gold);
+    line-height: 1.6;
+    user-select: all;
+  }
+
+  /* Copy button */
+  .copy-btn {
+    background: var(--gold);
+    color: #000;
+    border: none;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .copy-btn:hover { background: var(--gold-dim); transform: translateY(-1px); }
+  .copy-btn.copied { background: var(--green); }
+
+  /* Tips section */
+  .tips-body { padding: 14px 18px; }
+  .tip-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 6px 0;
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.45;
+  }
+  .tip-icon {
+    color: var(--gold);
+    flex-shrink: 0;
+    font-size: 14px;
+    margin-top: 1px;
+  }
+  .tip-row strong { color: var(--text); }
+
+  /* Post meta */
+  .meta-body { padding: 14px 18px; }
+  .meta-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 7px 0;
+    font-size: 13px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .meta-row:last-child { border: none; }
+  .meta-key { color: var(--text3); }
+  .meta-val { font-weight: 500; }
+  .meta-val.gold { color: var(--gold); }
+
+  /* Download section */
+  .download-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 14px 18px;
+  }
+  .dl-thumb {
+    aspect-ratio: 1;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s;
+    background: var(--card); /* placeholder */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .dl-thumb:hover { border-color: var(--gold); transform: scale(1.03); }
+  .dl-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .dl-thumb .dl-num {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    background: rgba(0,0,0,0.75);
+    color: var(--gold);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  /* Footer */
+  .page-footer {
+    text-align: center;
+    padding: 30px 20px;
+    border-top: 1px solid var(--border);
+    margin-top: 20px;
+  }
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    letter-spacing: 6px;
+    color: var(--gold);
+    margin-bottom: 4px;
+  }
+  .footer-sub {
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 3px;
+  }
+
+  /* Nav links */
+  .post-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    margin-top: 10px;
+    border-top: 1px solid var(--border);
+  }
+  .post-nav a {
+    color: var(--text2);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    transition: all 0.2s;
+  }
+  .post-nav a:hover {
+    color: var(--gold);
+    border-color: var(--border-gold);
+    background: rgba(197,160,89,0.05);
+  }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .animate-in {
+    animation: fadeUp 0.5s ease-out both;
+  }
+  .delay-1 { animation-delay: 0.1s; }
+  .delay-2 { animation-delay: 0.2s; }
+  .delay-3 { animation-delay: 0.3s; }
+  .delay-4 { animation-delay: 0.4s; }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <a href="index.html" class="topbar-back">← Nazad na feed</a>
+    <div class="topbar-divider"></div>
+    <span class="topbar-title">POST 8 — KRITERIJUMI LUKSUZA</span>
+  </div>
+  <span class="topbar-badge">CAROUSEL • 6 SLAJDOVA</span>
+</div>
+
+<!-- HERO -->
+<div class="hero animate-in">
+  <div class="hero-label">💎 EDUKATIVNI CAROUSEL — PREMIUM STANDARDI</div>
+  <h1>Šta jednu nekretninu čini zaista <span class="gold">PREMIUM</span> klasom?</h1>
+  <p class="hero-sub">Svi koriste reč "premium", ali šta to zapravo znači u praksi? Ovaj post edukuje kupce o pravim standardima luksuza na tržištu Novog Sada.</p>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- LEFT: CAROUSEL PREVIEW -->
+  <div class="carousel-wrapper animate-in delay-1">
+    <div class="carousel-phone">
+      <div class="phone-header">
+        <div class="ph-avatar">A</div>
+        <div class="ph-info">
+          <div class="ph-name">apexrealestaters</div>
+          <div class="ph-location">Novi Sad, Serbia</div>
+        </div>
+        <div class="ph-dots">•••</div>
+      </div>
+
+      <div class="carousel-area" id="carouselArea">
+        <span class="slide-counter" id="slideCounter">1/6</span>
+
+        <div class="carousel-track" id="track" style="width: 600%;">
+          <div class="carousel-slide" style="width: calc(100% / 6);"><img src="templates/post8_slide1.png" alt="Cover — Kriterijumi Luksuza"></div>
+          <div class="carousel-slide" style="width: calc(100% / 6);"><img src="templates/post8_slide2.png" alt="Lokacija i Mikrolokacija"></div>
+          <div class="carousel-slide" style="width: calc(100% / 6);"><img src="templates/post8_slide3.png" alt="Beskompromisni materijali"></div>
+          <div class="carousel-slide" style="width: calc(100% / 6);"><img src="templates/post8_slide4.png" alt="Maksimalna privatnost"></div>
+          <div class="carousel-slide" style="width: calc(100% / 6);"><img src="templates/post8_slide5.png" alt="Lifestyle Sadržaji"></div>
+          <div class="carousel-slide" style="width: calc(100% / 6);"><img src="templates/post8_slide6.png" alt="Poziv na akciju"></div>
+        </div>
+
+        <button class="c-nav c-prev off" id="prevBtn" onclick="go(-1)">‹</button>
+        <button class="c-nav c-next" id="nextBtn" onclick="go(1)">›</button>
+      </div>
+
+      <div class="ig-actions">
+        <div class="ig-actions-left">
+          <span class="ig-icon" id="heartIcon" onclick="toggleLike()">♡</span>
+          <span class="ig-icon">💬</span>
+          <span class="ig-icon">➤</span>
+        </div>
+        <span class="ig-icon">🔖</span>
+      </div>
+
+      <div class="ig-dots" id="igDots"></div>
+
+      <div class="ig-likes" id="likesText">234 likes</div>
+      <div class="ig-caption-preview">
+        <strong>apexrealestaters</strong> 💎 Svi govore "lux", ali evo šta APEX standardizuje kao premium! ➡️ <span style="color:var(--text3)">više</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="panel">
+
+    <!-- SLIDE INFO -->
+    <div class="panel-card animate-in delay-2">
+      <div class="panel-header">
+        <h3>📑 Slajdovi</h3>
+        <span style="font-size:12px;color:var(--text3)">Klikni da previewuješ</span>
+      </div>
+      <div class="slide-info-list" id="slideInfoList">
+        <div class="si-item active" data-slide="0" onclick="goTo(0)">
+          <span class="si-num">1</span>
+          <div>
+            <div class="si-title">Cover — Šta je pravi premium?</div>
+            <div class="si-desc">Uvod, definisanje luksuza danas naspram prazne reči.</div>
+          </div>
+        </div>
+        <div class="si-item" data-slide="1" onclick="goTo(1)">
+          <span class="si-num">2</span>
+          <div>
+            <div class="si-title">Lokacija + Mikrolokacija</div>
+            <div class="si-desc">Nije samo centar: to je pogled, pristup, infrastruktura i mir u sred buke.</div>
+          </div>
+        </div>
+        <div class="si-item" data-slide="2" onclick="goTo(2)">
+          <span class="si-num">3</span>
+          <div>
+            <div class="si-title">Beskompromisni materijali</div>
+            <div class="si-desc">Visina plafona od 3m, alu-drvo stolarija, ventilisane fasade i smart-home integracija.</div>
+          </div>
+        </div>
+        <div class="si-item" data-slide="3" onclick="goTo(3)">
+          <span class="si-num">4</span>
+          <div>
+            <div class="si-title">Privatnost i ekskluzivnost</div>
+            <div class="si-desc">Zgrade sa malim brojem stanova, gde jedan lift opslužuje samo vas.</div>
+          </div>
+        </div>
+        <div class="si-item" data-slide="4" onclick="goTo(4)">
+          <span class="si-num">5</span>
+          <div>
+            <div class="si-title">Lifestyle Sadržaji</div>
+            <div class="si-desc">Ne prodajemo kvadrate već način života: recepcija 24/7, spa zona, obezbeđenje.</div>
+          </div>
+        </div>
+        <div class="si-item" data-slide="5" onclick="goTo(5)">
+          <span class="si-num">6</span>
+          <div>
+            <div class="si-title">Doživite vrhunski standard</div>
+            <div class="si-desc">Poziv na akciju — zakažite prezentaciju naših najekskluzivnijih projekata.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAPTION -->
+    <div class="panel-card animate-in delay-3">
+      <div class="panel-header">
+        <h3>✍️ Caption</h3>
+        <button class="copy-btn" id="copyBtn" onclick="copyCaption()">📋 Kopiraj</button>
+      </div>
+      <div class="caption-body">
+        <div class="caption-text" id="captionText">Reč „luksuz“ se danas prečesto koristi. Ali šta zapravo znači kada kažemo da je nekretnina PREMIUM? 💎
+
+U APEX agenciji, definicija premium klase je bez kompromisa. Nisu u pitanju samo skupi materijali; u pitanju je pažljivo odabran stil života.
+
+Prevucite ➡️ i pogledajte koja 4 kriterijuma jedna zgrada mora da ispuni kako bismo je svrstali u našu najekskluzivniju ponudu.
+
+1️⃣ LOKACIJA I MIKROLOKACIJA: Nije svaki centar luksuz. Pravi premium garantuje tišinu i intimnost, čak i kada ste u samom srcu grada.
+2️⃣ BESKOMPROMISNI MATERIJALI: Visina plafona 3m, pametni sistemi poslednje generacije, vrhunska zvučna i termo izolacija.
+3️⃣ MAKSIMALNA PRIVATNOST: Manje komšija, više diskrecije. Ograničen broj stambenih jedinica.
+4️⃣ LIFESTYLE SADRŽAJI: 24/7 recepcija, privatni spa i obezbeđenje koje vam štiti mir neprocenjivi su danas.
+
+🔖 Sačuvajte ovaj post ukoliko razmišljate o investiranju u najkvalitetnije nekretnine u gradu!
+📩 Naš APEX Portfolio sadrži projekte koji nisu javno oglašeni. Pišite nam u DM za više informacija!
+
+📍 Mičurinova 74, Novi Sad
+📞 064 333 5757
+🌐 apexrealestate.rs
+
+<span class="gold">🔑 Od ideje do ključa.</span></div>
+
+        <div class="hashtags-area">
+          <div class="hashtags-label">Hashtagovi — dodaj u prvi komentar</div>
+          <div class="hashtags-text" id="hashtagsText">#APEXRealEstate #PremiumNekretnine #LuksuzneNekretnine #NoviSad #NekretnineNoviSad #Investiranje #LuxuryRealEstate #StanoviNoviSad #RealEstateSerbia #LuxZivot #AgentZaNekretnine</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SAVETI -->
+    <div class="panel-card animate-in delay-4">
+      <div class="panel-header">
+        <h3>💡 Saveti za objavljivanje</h3>
+      </div>
+      <div class="tips-body">
+        <div class="tip-row">
+          <span class="tip-icon">✦</span>
+          <span>Dizajn slajdova treba da bude elegantan, sa dosta crne pozadine i zlatnih akcenata kako bi asocirao na luksuz.</span>
+        </div>
+        <div class="tip-row">
+          <span class="tip-icon">✦</span>
+          <span>Objaviti u <strong>nedelju popodne (18h)</strong> kada premium kupovina najčešće privlači pažnju onih koji odmaraju.</span>
+        </div>
+        <div class="tip-row">
+          <span class="tip-icon">✦</span>
+          <span>Služi kao vrhunski alat za brendiranje tvoje agencije i diferencijaciju na tržištu.</span>
+        </div>
+        <div class="tip-row">
+          <span class="tip-icon">✦</span>
+          <span>Podeliti story uz anketu: "Šta je za vas najveći luksuz? A) Lokacija B) Privatnost"</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- POST META -->
+    <div class="panel-card animate-in delay-4">
+      <div class="panel-header">
+        <h3>📊 Post detalji</h3>
+      </div>
+      <div class="meta-body">
+        <div class="meta-row">
+          <span class="meta-key">Tip</span>
+          <span class="meta-val">Carousel (6 slajdova)</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-key">Format</span>
+          <span class="meta-val">1080 × 1080 px</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-key">Tema</span>
+          <span class="meta-val gold">Edukacija — Premium standard</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-key">Pozicija na feedu</span>
+          <span class="meta-val">POST 8 (ili sledeći)</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-key">Predloženi dan</span>
+          <span class="meta-val">Nedelja</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-key">Predloženo vreme</span>
+          <span class="meta-val gold">18:00</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- DOWNLOAD THUMBNAILS -->
+    <div class="panel-card animate-in delay-4">
+      <div class="panel-header">
+        <h3>📥 Slajdovi za preuzimanje</h3>
+      </div>
+      <div class="download-grid">
+        <a class="dl-thumb" href="templates/post8_slide1.png" target="_blank">
+          <img src="templates/post8_slide1.png" alt="Slide 1">
+          <span class="dl-num">1</span>
+        </a>
+        <a class="dl-thumb" href="templates/post8_slide2.png" target="_blank">
+          <img src="templates/post8_slide2.png" alt="Slide 2">
+          <span class="dl-num">2</span>
+        </a>
+        <a class="dl-thumb" href="templates/post8_slide3.png" target="_blank">
+          <img src="templates/post8_slide3.png" alt="Slide 3">
+          <span class="dl-num">3</span>
+        </a>
+        <a class="dl-thumb" href="templates/post8_slide4.png" target="_blank">
+          <img src="templates/post8_slide4.png" alt="Slide 4">
+          <span class="dl-num">4</span>
+        </a>
+        <a class="dl-thumb" href="templates/post8_slide5.png" target="_blank">
+          <img src="templates/post8_slide5.png" alt="Slide 5">
+          <span class="dl-num">5</span>
+        </a>
+        <a class="dl-thumb" href="templates/post8_slide6.png" target="_blank">
+          <img src="templates/post8_slide6.png" alt="Slide 6">
+          <span class="dl-num">6</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- NAVIGATION -->
+    <div class="post-nav">
+      <a href="index.html">← Feed ⊞</a>
+      <a href="vizitka.html">Vizitka →</a>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="page-footer">
+  <div class="footer-logo">A P E X</div>
+  <div class="footer-sub">Real Estate • Novi Sad</div>
+</div>
+
+<script>
+let current = 0;
+const total = 6;
+let liked = false;
+let likeCount = 234;
+
+function go(dir) {
+  current += dir;
+  if (current < 0) current = 0;
+  if (current >= total) current = total - 1;
+  updateCarousel();
+}
+
+function goTo(i) {
+  current = i;
+  updateCarousel();
+}
+
+function updateCarousel() {
+  document.getElementById('track').style.transform = `translateX(-${current * (100/6)}%)`;
+  document.getElementById('slideCounter').textContent = `${current+1}/${total}`;
+
+  // Nav buttons
+  document.getElementById('prevBtn').classList.toggle('off', current === 0);
+  document.getElementById('nextBtn').classList.toggle('off', current === total - 1);
+
+  // Dots
+  document.querySelectorAll('.ig-dot').forEach((d, i) => {
+    d.classList.toggle('active', i === current);
+  });
+
+  // Slide info highlight
+  document.querySelectorAll('.si-item').forEach((item, i) => {
+    item.classList.toggle('active', i === current);
+  });
+}
+
+function toggleLike() {
+  const icon = document.getElementById('heartIcon');
+  liked = !liked;
+  if (liked) {
+    icon.textContent = '❤️';
+    icon.classList.add('liked');
+    likeCount++;
+  } else {
+    icon.textContent = '♡';
+    icon.classList.remove('liked');
+    likeCount--;
+  }
+  document.getElementById('likesText').textContent = likeCount + ' likes';
+}
+
+function copyCaption() {
+  const caption = document.getElementById('captionText').innerText;
+  const hashtags = document.getElementById('hashtagsText').innerText;
+  const full = caption + '\n\n' + hashtags;
+  navigator.clipboard.writeText(full).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.innerHTML = '✅ Kopirano!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.innerHTML = '📋 Kopiraj';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+
+// Init dots
+const dotsContainer = document.getElementById('igDots');
+for (let i = 0; i < total; i++) {
+  const dot = document.createElement('div');
+  dot.className = 'ig-dot' + (i === 0 ? ' active' : '');
+  dot.onclick = () => goTo(i);
+  dotsContainer.appendChild(dot);
+}
+
+// Swipe support
+let startX = 0;
+const area = document.getElementById('carouselArea');
+area.addEventListener('touchstart', e => startX = e.touches[0].clientX);
+area.addEventListener('touchend', e => {
+  const diff = startX - e.changedTouches[0].clientX;
+  if (Math.abs(diff) > 40) go(diff > 0 ? 1 : -1);
+});
+</script>
+
+</body>
+</html>

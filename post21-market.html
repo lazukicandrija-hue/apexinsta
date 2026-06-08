@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POST 21 — Tržišni presek 📊 | APEX</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C5A059;
+    --gold-dim: #9a8044;
+    --bg: #060606;
+    --bg2: #0D0D0D;
+    --card: #111111;
+    --card-hover: #161616;
+    --border: #1e1e1e;
+    --border-gold: rgba(197,160,89,0.25);
+    --text: #F5F0E8;
+    --text2: #999;
+    --text3: #555;
+    --green: #4ade80;
+    --red: #f87171;
+    --blue: #60a5fa;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .topbar { position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 12px 24px; background: rgba(6,6,6,0.85); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); }
+  .topbar-left { display: flex; align-items: center; gap: 12px; }
+  .topbar-back { color: var(--text2); text-decoration: none; font-size: 13px; display: flex; align-items: center; gap: 6px; transition: color 0.2s; }
+  .topbar-back:hover { color: var(--gold); }
+  .topbar-divider { width: 1px; height: 16px; background: var(--border); }
+  .topbar-title { font-weight: 600; font-size: 13px; color: var(--text); }
+  .topbar-badge { background: var(--blue); color: #000; font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 12px; letter-spacing: 1.5px; }
+
+  .hero { text-align: center; padding: 50px 20px 30px; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; top: -100px; left: 50%; transform: translateX(-50%); width: 600px; height: 400px; background: radial-gradient(ellipse, rgba(96,165,250,0.06) 0%, transparent 70%); pointer-events: none; }
+  .hero-label { display: inline-flex; align-items: center; gap: 8px; background: rgba(96,165,250,0.1); border: 1px solid rgba(96,165,250,0.25); color: var(--blue); font-size: 11px; font-weight: 600; padding: 6px 16px; border-radius: 20px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 20px; }
+  .hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(32px, 5vw, 48px); font-weight: 700; line-height: 1.2; margin-bottom: 10px; }
+  .hero h1 .gold { color: var(--gold); }
+  .hero-sub { color: var(--text2); font-size: 15px; max-width: 560px; margin: 0 auto; line-height: 1.5; }
+
+  .main { max-width: 1100px; margin: 0 auto; padding: 0 20px 60px; display: grid; grid-template-columns: 1fr 400px; gap: 30px; align-items: start; }
+  @media (max-width: 860px) { .main { grid-template-columns: 1fr; } }
+
+  .carousel-wrapper { position: sticky; top: 60px; }
+  .carousel-phone { background: var(--bg2); border-radius: 24px; border: 2px solid var(--border); overflow: hidden; box-shadow: 0 20px 80px rgba(0,0,0,0.5), 0 0 60px rgba(197,160,89,0.04); }
+  .phone-header { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--border); background: var(--bg); }
+  .ph-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--gold), #8B6914); display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-size: 11px; font-weight: 700; color: #000; letter-spacing: 1px; }
+  .ph-info { flex: 1; }
+  .ph-name { font-size: 13px; font-weight: 600; }
+  .ph-location { font-size: 11px; color: var(--text2); }
+  .ph-dots { color: var(--text2); font-size: 18px; letter-spacing: 2px; cursor: pointer; }
+
+  .post-image-area { position: relative; width: 100%; aspect-ratio: 1; overflow: hidden; background: #000; }
+  .post-image-area img { width: 100%; height: 100%; object-fit: cover; }
+
+  .ig-actions { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; font-size: 24px; }
+  .ig-actions-left { display: flex; gap: 14px; }
+  .ig-icon { cursor: pointer; transition: transform 0.15s; user-select: none; }
+  .ig-icon:hover { transform: scale(1.15); }
+  .ig-icon.liked { color: var(--red); }
+
+  .ig-likes { padding: 0 14px 4px; font-size: 13px; font-weight: 600; }
+  .ig-caption-preview { padding: 2px 14px 14px; font-size: 13px; line-height: 1.5; color: var(--text2); }
+  .ig-caption-preview strong { color: var(--text); font-weight: 600; }
+
+  .panel { display: flex; flex-direction: column; gap: 16px; }
+  .panel-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; transition: border-color 0.3s; }
+  .panel-card:hover { border-color: rgba(255,255,255,0.08); }
+  .panel-header { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; border-bottom: 1px solid var(--border); }
+  .panel-header h3 { font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+
+  /* Price cards */
+  .price-body { padding: 12px 18px; }
+  .price-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .price-row:last-child { border: none; }
+  .price-location { font-size: 14px; font-weight: 600; }
+  .price-location small { font-size: 11px; color: var(--text3); font-weight: 400; display: block; margin-top: 2px; }
+  .price-value { text-align: right; }
+  .price-amount { font-size: 16px; font-weight: 700; color: var(--gold); }
+  .price-change { font-size: 11px; color: var(--green); font-weight: 600; }
+
+  .caption-body { padding: 16px 18px; }
+  .caption-text { font-size: 13.5px; line-height: 1.7; white-space: pre-wrap; user-select: all; }
+  .caption-text .gold { color: var(--gold); }
+
+  .hashtags-area { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+  .hashtags-label { font-size: 10px; font-weight: 600; color: var(--text3); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 6px; }
+  .hashtags-text { font-size: 12.5px; color: var(--gold); line-height: 1.6; user-select: all; }
+
+  .copy-btn { background: var(--gold); color: #000; border: none; font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 8px; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; display: flex; align-items: center; gap: 5px; }
+  .copy-btn:hover { background: var(--gold-dim); transform: translateY(-1px); }
+  .copy-btn.copied { background: var(--green); }
+
+  .tips-body { padding: 14px 18px; }
+  .tip-row { display: flex; align-items: flex-start; gap: 10px; padding: 6px 0; font-size: 13px; color: var(--text2); line-height: 1.45; }
+  .tip-icon { color: var(--gold); flex-shrink: 0; font-size: 14px; margin-top: 1px; }
+  .tip-row strong { color: var(--text); }
+
+  .meta-body { padding: 14px 18px; }
+  .meta-row { display: flex; justify-content: space-between; padding: 7px 0; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .meta-row:last-child { border: none; }
+  .meta-key { color: var(--text3); }
+  .meta-val { font-weight: 500; }
+  .meta-val.gold { color: var(--gold); }
+
+  .page-footer { text-align: center; padding: 30px 20px; border-top: 1px solid var(--border); margin-top: 20px; }
+  .footer-logo { font-family: 'Playfair Display', serif; font-size: 20px; letter-spacing: 6px; color: var(--gold); margin-bottom: 4px; }
+  .footer-sub { font-size: 11px; color: var(--text3); letter-spacing: 3px; }
+
+  .post-nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; margin-top: 10px; border-top: 1px solid var(--border); }
+  .post-nav a { color: var(--text2); text-decoration: none; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border); transition: all 0.2s; }
+  .post-nav a:hover { color: var(--gold); border-color: var(--border-gold); background: rgba(197,160,89,0.05); }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  .animate-in { animation: fadeUp 0.5s ease-out both; }
+  .delay-1 { animation-delay: 0.1s; } .delay-2 { animation-delay: 0.2s; } .delay-3 { animation-delay: 0.3s; } .delay-4 { animation-delay: 0.4s; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <a href="index.html" class="topbar-back">← Nazad na feed</a>
+    <div class="topbar-divider"></div>
+    <span class="topbar-title">POST 21 — TRŽIŠNI PRESEK</span>
+  </div>
+  <span class="topbar-badge">MARKET DATA • INFOGRAPHIC</span>
+</div>
+
+<div class="hero animate-in">
+  <div class="hero-label">📊 MARKET INSIGHTS — APRIL 2026</div>
+  <h1>Tržišni presek: <span class="gold">Novi Sad</span></h1>
+  <p class="hero-sub">Pozicionirajte se kao autoritet koji poznaje brojeve. Konkretni podaci o cenama po kvartovima diferenciraju vas od svake "obične" agencije.</p>
+</div>
+
+<div class="main">
+
+  <div class="carousel-wrapper animate-in delay-1">
+    <div class="carousel-phone">
+      <div class="phone-header">
+        <div class="ph-avatar">A</div>
+        <div class="ph-info">
+          <div class="ph-name">apexrealestaters</div>
+          <div class="ph-location">Novi Sad, Serbia</div>
+        </div>
+        <div class="ph-dots">•••</div>
+      </div>
+
+      <div class="post-image-area">
+        <img src="templates/post21_market_update.png" alt="Tržišni presek April 2026">
+      </div>
+
+      <div class="ig-actions">
+        <div class="ig-actions-left">
+          <span class="ig-icon" id="heartIcon" onclick="toggleLike()">♡</span>
+          <span class="ig-icon">💬</span>
+          <span class="ig-icon">➤</span>
+        </div>
+        <span class="ig-icon">🔖</span>
+      </div>
+
+      <div class="ig-likes" id="likesText">567 likes</div>
+      <div class="ig-caption-preview">
+        <strong>apexrealestaters</strong> 📊 TRŽIŠNI PRESEK — April 2026. Evo kako stoje cene po kvartovima... <span style="color:var(--text3)">više</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+
+    <!-- PRICE DATA -->
+    <div class="panel-card animate-in delay-2">
+      <div class="panel-header">
+        <h3>📊 Cene po kvartovima</h3>
+        <span style="font-size:11px;color:var(--green);font-weight:600">April 2026</span>
+      </div>
+      <div class="price-body">
+        <div class="price-row">
+          <div class="price-location">Liman<small>Liman I, II, III, IV</small></div>
+          <div class="price-value">
+            <div class="price-amount">2.800€/m²</div>
+            <div class="price-change">↑ +9% YoY</div>
+          </div>
+        </div>
+        <div class="price-row">
+          <div class="price-location">Grbavica<small>Nova i stara</small></div>
+          <div class="price-value">
+            <div class="price-amount">2.650€/m²</div>
+            <div class="price-change">↑ +12% YoY</div>
+          </div>
+        </div>
+        <div class="price-row">
+          <div class="price-location">Podbara<small>Centar grada</small></div>
+          <div class="price-value">
+            <div class="price-amount">1.950€/m²</div>
+            <div class="price-change">↑ +15% YoY</div>
+          </div>
+        </div>
+        <div class="price-row">
+          <div class="price-location">Detelinara<small>Severni deo</small></div>
+          <div class="price-value">
+            <div class="price-amount">1.750€/m²</div>
+            <div class="price-change">↑ +11% YoY</div>
+          </div>
+        </div>
+        <div class="price-row">
+          <div class="price-location">Telep<small>Zapadni deo</small></div>
+          <div class="price-value">
+            <div class="price-amount">1.680€/m²</div>
+            <div class="price-change">↑ +8% YoY</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAPTION -->
+    <div class="panel-card animate-in delay-3">
+      <div class="panel-header">
+        <h3>✍️ Caption</h3>
+        <button class="copy-btn" id="copyBtn" onclick="copyCaption()">📋 Kopiraj</button>
+      </div>
+      <div class="caption-body">
+        <div class="caption-text" id="captionText">📊 TRŽIŠNI PRESEK — April 2026
+
+Evo kako stoje cene nekretnina po kvartovima u Novom Sadu:
+
+📈 Liman: 2.800€/m² (+9% u odnosu na prošlu godinu)
+📈 Grbavica: 2.650€/m² (+12% YoY)
+📈 Podbara: 1.950€/m² (+15% YoY)
+📈 Detelinara: 1.750€/m² (+11% YoY)
+📈 Telep: 1.680€/m² (+8% YoY)
+
+💡 Šta ovo znači za vas?
+
+→ Ako planirate kupovinu — vreme je SADA
+→ Ako planirate prodaju — cene su blizu istorijskog maksimuma
+→ Ako investirate — Podbara i Grbavica imaju najjači rast
+
+📩 Besplatna procena vrednosti vaše nekretnine → DM ili 064 333 5757
+
+📍 APEX Real Estate — Od ideje do ključa. 🔑</div>
+
+        <div class="hashtags-area">
+          <div class="hashtags-label">Hashtagovi — dodaj u prvi komentar</div>
+          <div class="hashtags-text" id="hashtagsText">#CeneNekretnina #NoviSad #TrzisteNekretnina #APEXRealEstate #Investiranje #Grbavica #Liman #Podbara #MarketUpdate #Infographic</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SAVETI -->
+    <div class="panel-card animate-in delay-4">
+      <div class="panel-header">
+        <h3>💡 Saveti za objavljivanje</h3>
+      </div>
+      <div class="tips-body">
+        <div class="tip-row">
+          <span class="tip-icon">✦</span>
+          <span>Objavi u <strong>sredu ujutru</strong> — poslovni dan, B2B audience aktivan</span>
+        </div>
+        <div class="tip-row">
+          <span class="tip-icon">✦</span>
+          <span>Ovaj format je <strong>heavy save</strong> — ljudi čuvaju podatke za kasniju referencu</span>
+        </div>
+        <div class="tip-row">
+          <span class="tip-icon">✦</span>
+          <span>Napravite <strong>recurring seriju</strong> — mesečni tržišni presek</span>
+        </div>
+        <div class="tip-row">
+          <span class="tip-icon">✦</span>
+          <span>Koristite <strong>realne podatke</strong> sa RGZ-a i lokalnih izvora za kredibilitet</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- POST META -->
+    <div class="panel-card animate-in delay-4">
+      <div class="panel-header">
+        <h3>📊 Post detalji</h3>
+      </div>
+      <div class="meta-body">
+        <div class="meta-row">
+          <span class="meta-key">Tip</span>
+          <span class="meta-val">Single Image (Infographic)</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-key">Format</span>
+          <span class="meta-val">1080 × 1080 px</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-key">Tema</span>
+          <span class="meta-val gold">Market Data / Authority</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-key">Pozicija na feedu</span>
+          <span class="meta-val">POST 21</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-key">Cilj</span>
+          <span class="meta-val gold">Authority + Saves</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-key">Predloženi dan</span>
+          <span class="meta-val">Sreda</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="post-nav">
+      <a href="post19-testimonial.html">← Prethodni post (19)</a>
+      <a href="index.html" style="color:var(--gold)">Nazad na feed →</a>
+    </div>
+
+  </div>
+</div>
+
+<div class="page-footer">
+  <div class="footer-logo">A P E X</div>
+  <div class="footer-sub">Real Estate • Novi Sad</div>
+</div>
+
+<script>
+  let liked = false;
+  function toggleLike() {
+    liked = !liked;
+    const h = document.getElementById('heartIcon');
+    const l = document.getElementById('likesText');
+    if(liked) { h.innerText = '♥'; h.classList.add('liked'); l.innerText = '568 likes'; h.style.transform = 'scale(1.3)'; setTimeout(() => h.style.transform = 'scale(1)', 200); }
+    else { h.innerText = '♡'; h.classList.remove('liked'); l.innerText = '567 likes'; }
+  }
+
+  function copyCaption() {
+    const caption = document.getElementById('captionText').innerText;
+    const hashtags = document.getElementById('hashtagsText').innerText;
+    navigator.clipboard.writeText(caption + '\n\n' + hashtags).then(() => {
+      const btn = document.getElementById('copyBtn');
+      btn.innerHTML = '✅ Kopirano!'; btn.classList.add('copied');
+      setTimeout(() => { btn.innerHTML = '📋 Kopiraj'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+</script>
+
+</body>
+</html>

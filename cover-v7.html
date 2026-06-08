@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APEX Real Estate – Art Deco Cover</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500&family=Outfit:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    width: 1080px;
+    height: 1080px;
+    overflow: hidden;
+    background: #0a0a0a;
+    font-family: 'Outfit', sans-serif;
+  }
+
+  .canvas {
+    position: relative;
+    width: 1080px;
+    height: 1080px;
+    background: #0a0a0a;
+    overflow: hidden;
+  }
+
+  /* ── Subtle radial vignette ── */
+  .canvas::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(184,148,74,0.04) 0%, transparent 60%);
+    z-index: 0;
+  }
+
+  /* ── Outer Art Deco border frame ── */
+  .outer-frame {
+    position: absolute;
+    inset: 28px;
+    border: 2px solid rgba(184,148,74,0.5);
+    z-index: 1;
+  }
+  .outer-frame::before {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    border: 1px solid rgba(184,148,74,0.25);
+  }
+
+  /* ── Corner ornaments (Art Deco fans) ── */
+  .corner {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    z-index: 2;
+  }
+  .corner svg { width: 100%; height: 100%; }
+  .corner-tl { top: 22px; left: 22px; }
+  .corner-tr { top: 22px; right: 22px; transform: scaleX(-1); }
+  .corner-bl { bottom: 22px; left: 22px; transform: scaleY(-1); }
+  .corner-br { bottom: 22px; right: 22px; transform: scale(-1,-1); }
+
+  /* ── Sunburst pattern behind logo ── */
+  .sunburst {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -54%);
+    width: 560px;
+    height: 560px;
+    z-index: 1;
+    opacity: 0.07;
+  }
+
+  /* ── Top Art Deco arch decoration ── */
+  .top-arch {
+    position: absolute;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  /* ── "Na prodaju" banner ── */
+  .banner {
+    position: absolute;
+    top: 72px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .banner-line {
+    width: 90px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #B8944A, transparent);
+  }
+  .banner-diamond {
+    width: 8px;
+    height: 8px;
+    background: #B8944A;
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
+  .banner-text {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 500;
+    font-size: 15px;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: #B8944A;
+    white-space: nowrap;
+  }
+
+  /* ── Decorative chevron row ── */
+  .chevron-row {
+    position: absolute;
+    top: 110px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    z-index: 3;
+  }
+  .chevron-row .chev {
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 8px solid rgba(184,148,74,0.3);
+  }
+
+  /* ── Art Deco arches behind logo ── */
+  .deco-arches {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -52%);
+    z-index: 2;
+  }
+
+  /* ── Logo container with decorative frame ── */
+  .logo-frame {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -52%);
+    z-index: 4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .logo-deco-border {
+    position: relative;
+    width: 420px;
+    height: 420px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  /* Outer octagonal frame */
+  .logo-deco-border::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 2px solid rgba(184,148,74,0.35);
+    clip-path: polygon(
+      15% 0%, 85% 0%, 100% 15%, 100% 85%,
+      85% 100%, 15% 100%, 0% 85%, 0% 15%
+    );
+  }
+  /* Inner octagonal frame */
+  .logo-deco-border::after {
+    content: '';
+    position: absolute;
+    inset: 14px;
+    border: 1px solid rgba(184,148,74,0.2);
+    clip-path: polygon(
+      15% 0%, 85% 0%, 100% 15%, 100% 85%,
+      85% 100%, 15% 100%, 0% 85%, 0% 15%
+    );
+  }
+  .logo-frame img {
+    width: 340px;
+    height: auto;
+    filter: drop-shadow(0 0 40px rgba(184,148,74,0.15));
+    position: relative;
+    z-index: 5;
+  }
+
+  /* ── Side vertical deco lines ── */
+  .side-deco {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 320px;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+  }
+  .side-deco-left { left: 60px; }
+  .side-deco-right { right: 60px; }
+
+  /* ── Location text ── */
+  .location-section {
+    position: absolute;
+    bottom: 310px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .location-divider {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .location-divider-line {
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(184,148,74,0.5), transparent);
+  }
+  .location-divider-dot {
+    width: 5px;
+    height: 5px;
+    background: #B8944A;
+    transform: rotate(45deg);
+  }
+  .location-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: 3px;
+    text-align: center;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.5);
+  }
+
+  /* ── Property details row ── */
+  .details-section {
+    position: absolute;
+    bottom: 195px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+  .detail-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 0 32px;
+  }
+  .detail-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 1px;
+  }
+  .detail-label {
+    font-family: 'Outfit', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    color: rgba(184,148,74,0.7);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+  .detail-divider {
+    width: 1px;
+    height: 50px;
+    background: linear-gradient(180deg, transparent, rgba(184,148,74,0.4), transparent);
+    flex-shrink: 0;
+  }
+
+  /* ── Art Deco diamond divider row ── */
+  .diamond-divider {
+    position: absolute;
+    bottom: 168px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 5;
+  }
+  .diamond-divider .dd-line {
+    width: 140px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(184,148,74,0.3), transparent);
+  }
+  .diamond-divider .dd-diamond {
+    width: 6px;
+    height: 6px;
+    background: rgba(184,148,74,0.4);
+    transform: rotate(45deg);
+  }
+
+  /* ── Price section ── */
+  .price-section {
+    position: absolute;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  .price-line {
+    width: 100px;
+    height: 1px;
+    position: relative;
+  }
+  .price-line::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, #B8944A);
+  }
+  .price-line.right::before {
+    background: linear-gradient(90deg, #B8944A, transparent);
+  }
+  .price-line-end {
+    width: 6px;
+    height: 6px;
+    background: #B8944A;
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
+  .price-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 44px;
+    font-weight: 800;
+    color: #d4af5a;
+    letter-spacing: 3px;
+    text-shadow: 0 2px 30px rgba(212,175,90,0.25);
+    white-space: nowrap;
+  }
+
+  /* ── Swipe hint ── */
+  .swipe-hint {
+    position: absolute;
+    bottom: 38px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    opacity: 0.5;
+    animation: swipeHintPulse 2.5s ease-in-out infinite;
+  }
+  .swipe-hint-text {
+    font-family: 'Outfit', sans-serif;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #B8944A;
+  }
+  .swipe-arrow {
+    display: flex;
+    gap: 3px;
+  }
+  .swipe-arrow .arr {
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid rgba(184,148,74,0.5);
+  }
+
+  @keyframes swipeHintPulse {
+    0%, 100% { opacity: 0.4; transform: translateX(-50%) translateY(0); }
+    50% { opacity: 0.7; transform: translateX(-50%) translateY(3px); }
+  }
+
+  /* ── Repeating fan pattern (top & bottom borders) ── */
+  .fan-strip {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    overflow: hidden;
+  }
+  .fan-strip-top { top: 44px; }
+  .fan-strip-bottom { bottom: 44px; transform: translateX(-50%) scaleY(-1); }
+
+  /* ── Horizontal deco line accents ── */
+  .h-accent-line {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 1px;
+    z-index: 3;
+  }
+  .h-accent-top {
+    top: 140px;
+    width: 600px;
+    background: linear-gradient(90deg, transparent, rgba(184,148,74,0.15), rgba(184,148,74,0.3), rgba(184,148,74,0.15), transparent);
+  }
+  .h-accent-mid {
+    bottom: 280px;
+    width: 700px;
+    background: linear-gradient(90deg, transparent, rgba(184,148,74,0.2), rgba(184,148,74,0.35), rgba(184,148,74,0.2), transparent);
+  }
+
+  /* ── Stepped Art Deco top ornament ── */
+  .stepped-ornament {
+    position: absolute;
+    top: 150px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+  }
+
+  /* ── Small repeating arch pattern ── */
+  .arch-pattern {
+    position: absolute;
+    z-index: 2;
+    opacity: 0.12;
+  }
+  .arch-pattern-left {
+    left: 45px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .arch-pattern-right {
+    right: 45px;
+    top: 50%;
+    transform: translateY(-50%) scaleX(-1);
+  }
+</style>
+</head>
+<body>
+<div class="canvas">
+
+  <!-- Outer decorative frame -->
+  <div class="outer-frame"></div>
+
+  <!-- Corner Art Deco fan ornaments -->
+  <div class="corner corner-tl">
+    <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 0 L80 0 L80 8 L8 8 L8 80 L0 80 Z" fill="rgba(184,148,74,0.3)"/>
+      <path d="M0 0 L40 0 L0 40 Z" fill="none" stroke="rgba(184,148,74,0.25)" stroke-width="1"/>
+      <path d="M0 0 L60 0 L0 60 Z" fill="none" stroke="rgba(184,148,74,0.15)" stroke-width="1"/>
+      <line x1="4" y1="4" x2="30" y2="4" stroke="rgba(184,148,74,0.4)" stroke-width="1"/>
+      <line x1="4" y1="4" x2="4" y2="30" stroke="rgba(184,148,74,0.4)" stroke-width="1"/>
+    </svg>
+  </div>
+  <div class="corner corner-tr">
+    <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 0 L80 0 L80 8 L8 8 L8 80 L0 80 Z" fill="rgba(184,148,74,0.3)"/>
+      <path d="M0 0 L40 0 L0 40 Z" fill="none" stroke="rgba(184,148,74,0.25)" stroke-width="1"/>
+      <path d="M0 0 L60 0 L0 60 Z" fill="none" stroke="rgba(184,148,74,0.15)" stroke-width="1"/>
+      <line x1="4" y1="4" x2="30" y2="4" stroke="rgba(184,148,74,0.4)" stroke-width="1"/>
+      <line x1="4" y1="4" x2="4" y2="30" stroke="rgba(184,148,74,0.4)" stroke-width="1"/>
+    </svg>
+  </div>
+  <div class="corner corner-bl">
+    <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 0 L80 0 L80 8 L8 8 L8 80 L0 80 Z" fill="rgba(184,148,74,0.3)"/>
+      <path d="M0 0 L40 0 L0 40 Z" fill="none" stroke="rgba(184,148,74,0.25)" stroke-width="1"/>
+      <path d="M0 0 L60 0 L0 60 Z" fill="none" stroke="rgba(184,148,74,0.15)" stroke-width="1"/>
+      <line x1="4" y1="4" x2="30" y2="4" stroke="rgba(184,148,74,0.4)" stroke-width="1"/>
+      <line x1="4" y1="4" x2="4" y2="30" stroke="rgba(184,148,74,0.4)" stroke-width="1"/>
+    </svg>
+  </div>
+  <div class="corner corner-br">
+    <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 0 L80 0 L80 8 L8 8 L8 80 L0 80 Z" fill="rgba(184,148,74,0.3)"/>
+      <path d="M0 0 L40 0 L0 40 Z" fill="none" stroke="rgba(184,148,74,0.25)" stroke-width="1"/>
+      <path d="M0 0 L60 0 L0 60 Z" fill="none" stroke="rgba(184,148,74,0.15)" stroke-width="1"/>
+      <line x1="4" y1="4" x2="30" y2="4" stroke="rgba(184,148,74,0.4)" stroke-width="1"/>
+      <line x1="4" y1="4" x2="4" y2="30" stroke="rgba(184,148,74,0.4)" stroke-width="1"/>
+    </svg>
+  </div>
+
+  <!-- Fan strip top -->
+  <div class="fan-strip fan-strip-top">
+    <svg width="920" height="14" viewBox="0 0 920 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Repeating small fan/arch shapes -->
+      <g opacity="0.3">
+        <path d="M0 14 Q10 0 20 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M20 14 Q30 0 40 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M40 14 Q50 0 60 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M60 14 Q70 0 80 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M80 14 Q90 0 100 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M100 14 Q110 0 120 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M120 14 Q130 0 140 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M140 14 Q150 0 160 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M160 14 Q170 0 180 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M180 14 Q190 0 200 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M200 14 Q210 0 220 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M220 14 Q230 0 240 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M240 14 Q250 0 260 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M260 14 Q270 0 280 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M280 14 Q290 0 300 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M300 14 Q310 0 320 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M320 14 Q330 0 340 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M340 14 Q350 0 360 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M360 14 Q370 0 380 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M380 14 Q390 0 400 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M400 14 Q410 0 420 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M420 14 Q430 0 440 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M440 14 Q450 0 460 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M460 14 Q470 0 480 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M480 14 Q490 0 500 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M500 14 Q510 0 520 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M520 14 Q530 0 540 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M540 14 Q550 0 560 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M560 14 Q570 0 580 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M580 14 Q590 0 600 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M600 14 Q610 0 620 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M620 14 Q630 0 640 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M640 14 Q650 0 660 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M660 14 Q670 0 680 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M680 14 Q690 0 700 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M700 14 Q710 0 720 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M720 14 Q730 0 740 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M740 14 Q750 0 760 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M760 14 Q770 0 780 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M780 14 Q790 0 800 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M800 14 Q810 0 820 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M820 14 Q830 0 840 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M840 14 Q850 0 860 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M860 14 Q870 0 880 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M880 14 Q890 0 900 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M900 14 Q910 0 920 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+      </g>
+    </svg>
+  </div>
+
+  <!-- Fan strip bottom -->
+  <div class="fan-strip fan-strip-bottom">
+    <svg width="920" height="14" viewBox="0 0 920 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g opacity="0.3">
+        <path d="M0 14 Q10 0 20 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M20 14 Q30 0 40 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M40 14 Q50 0 60 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M60 14 Q70 0 80 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M80 14 Q90 0 100 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M100 14 Q110 0 120 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M120 14 Q130 0 140 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M140 14 Q150 0 160 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M160 14 Q170 0 180 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M180 14 Q190 0 200 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M200 14 Q210 0 220 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M220 14 Q230 0 240 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M240 14 Q250 0 260 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M260 14 Q270 0 280 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M280 14 Q290 0 300 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M300 14 Q310 0 320 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M320 14 Q330 0 340 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M340 14 Q350 0 360 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M360 14 Q370 0 380 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M380 14 Q390 0 400 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M400 14 Q410 0 420 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M420 14 Q430 0 440 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M440 14 Q450 0 460 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M460 14 Q470 0 480 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M480 14 Q490 0 500 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M500 14 Q510 0 520 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M520 14 Q530 0 540 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M540 14 Q550 0 560 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M560 14 Q570 0 580 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M580 14 Q590 0 600 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M600 14 Q610 0 620 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M620 14 Q630 0 640 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M640 14 Q650 0 660 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M660 14 Q670 0 680 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M680 14 Q690 0 700 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M700 14 Q710 0 720 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M720 14 Q730 0 740 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M740 14 Q750 0 760 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M760 14 Q770 0 780 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M780 14 Q790 0 800 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M800 14 Q810 0 820 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M820 14 Q830 0 840 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M840 14 Q850 0 860 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M860 14 Q870 0 880 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M880 14 Q890 0 900 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+        <path d="M900 14 Q910 0 920 14" stroke="#B8944A" stroke-width="0.8" fill="none"/>
+      </g>
+    </svg>
+  </div>
+
+  <!-- Banner: "Na prodaju" -->
+  <div class="banner">
+    <div class="banner-line"></div>
+    <div class="banner-diamond"></div>
+    <span class="banner-text" id="tipLabel">Na prodaju</span>
+    <div class="banner-diamond"></div>
+    <div class="banner-line"></div>
+  </div>
+
+  <!-- Chevron row -->
+  <div class="chevron-row">
+    <div class="chev"></div><div class="chev"></div><div class="chev"></div>
+    <div class="chev"></div><div class="chev"></div><div class="chev"></div>
+    <div class="chev"></div><div class="chev"></div><div class="chev"></div>
+    <div class="chev"></div><div class="chev"></div><div class="chev"></div>
+    <div class="chev"></div><div class="chev"></div><div class="chev"></div>
+  </div>
+
+  <!-- Horizontal accent line top -->
+  <div class="h-accent-line h-accent-top"></div>
+
+  <!-- Stepped Art Deco top ornament -->
+  <div class="stepped-ornament">
+    <svg width="300" height="60" viewBox="0 0 300 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g opacity="0.2">
+        <!-- Central stepped pyramid -->
+        <rect x="140" y="0" width="20" height="60" fill="none" stroke="#B8944A" stroke-width="0.8"/>
+        <rect x="125" y="12" width="50" height="48" fill="none" stroke="#B8944A" stroke-width="0.8"/>
+        <rect x="110" y="24" width="80" height="36" fill="none" stroke="#B8944A" stroke-width="0.8"/>
+        <rect x="95" y="36" width="110" height="24" fill="none" stroke="#B8944A" stroke-width="0.8"/>
+        <rect x="80" y="48" width="140" height="12" fill="none" stroke="#B8944A" stroke-width="0.8"/>
+        <!-- Side lines -->
+        <line x1="60" y1="55" x2="80" y2="55" stroke="#B8944A" stroke-width="0.8"/>
+        <line x1="220" y1="55" x2="240" y2="55" stroke="#B8944A" stroke-width="0.8"/>
+        <line x1="40" y1="58" x2="60" y2="58" stroke="#B8944A" stroke-width="0.6"/>
+        <line x1="240" y1="58" x2="260" y2="58" stroke="#B8944A" stroke-width="0.6"/>
+      </g>
+    </svg>
+  </div>
+
+  <!-- Sunburst behind logo -->
+  <div class="sunburst">
+    <svg width="560" height="560" viewBox="0 0 560 560" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g transform="translate(280,280)">
+        <!-- Radial sunburst lines -->
+        <line x1="0" y1="0" x2="0" y2="-270" stroke="#B8944A" stroke-width="0.6"/>
+        <line x1="0" y1="0" x2="70" y2="-260" stroke="#B8944A" stroke-width="0.5"/>
+        <line x1="0" y1="0" x2="135" y2="-235" stroke="#B8944A" stroke-width="0.5"/>
+        <line x1="0" y1="0" x2="191" y2="-191" stroke="#B8944A" stroke-width="0.5"/>
+        <line x1="0" y1="0" x2="235" y2="-135" stroke="#B8944A" stroke-width="0.5"/>
+        <line x1="0" y1="0" x2="260" y2="-70" stroke="#B8944A" stroke-width="0.5"/>
+        <line x1="0" y1="0" x2="270" y2="0" stroke="#B8944A" stroke-width="0.6"/>
+        <line x1="0" y1="0" x2="260" y2="70" stroke="#B8944A" stroke-width="0.5"/>
+        <line x1="0" y1="0" x2="235" y2="135" stroke="#B8944A" stroke-width="0.5"/>
+        <line x1="0" y1="0" x2="191" y2="191" stroke="#B8944A" stroke-width="0.5"/>
+        <line x1="0" y1="0" x2="135" y2="235" stroke="#B8944A" stroke-width="0.5"/>
+        <line x1="0" y1="0" x2="70" y2="260" stroke="#B8944A" stroke-width="0.5"/>
+        <line x1="0" y1="0" x2="0" y2="270" stroke="#B8944A" stroke-width="0.6"/>
+        <line x1="0" y1="0" x2="-70" y2="260" stroke="#B8944A" stroke-width="0.5"/>
+        <line x1="0" y1="0" x2="-135" y2="235" stroke="#B8944A" stroke-width="0.5"/>
+        <line x1="0" y1="0" x2="-191" y2="191" stroke="#B8944A" stroke-width="0.5"/>
+        <line x1="0" y1="0" x2="-235" y2="135" stroke="#B8944A" stroke-width="0.5"/>
+        <line x1="0" y1="0" x2="-260" y2="70" stroke="#B8944A" stroke-width="0.5"/>
+        <line x1="0" y1="0" x2="-270" y2="0" stroke="#B8944A" stroke-width="0.6"/>
+        <line x1="0" y1="0" x2="-260" y2="-70" stroke="#B8944A" stroke-width="0.5"/>
+        <line x1="0" y1="0" x2="-235" y2="-135" stroke="#B8944A" stroke-width="0.5"/>
+        <line x1="0" y1="0" x2="-191" y2="-191" stroke="#B8944A" stroke-width="0.5"/>
+        <line x1="0" y1="0" x2="-135" y2="-235" stroke="#B8944A" stroke-width="0.5"/>
+        <line x1="0" y1="0" x2="-70" y2="-260" stroke="#B8944A" stroke-width="0.5"/>
+        <!-- Additional intermediate rays -->
+        <line x1="0" y1="0" x2="35" y2="-268" stroke="#B8944A" stroke-width="0.3"/>
+        <line x1="0" y1="0" x2="103" y2="-250" stroke="#B8944A" stroke-width="0.3"/>
+        <line x1="0" y1="0" x2="165" y2="-215" stroke="#B8944A" stroke-width="0.3"/>
+        <line x1="0" y1="0" x2="215" y2="-165" stroke="#B8944A" stroke-width="0.3"/>
+        <line x1="0" y1="0" x2="250" y2="-103" stroke="#B8944A" stroke-width="0.3"/>
+        <line x1="0" y1="0" x2="268" y2="-35" stroke="#B8944A" stroke-width="0.3"/>
+        <line x1="0" y1="0" x2="268" y2="35" stroke="#B8944A" stroke-width="0.3"/>
+        <line x1="0" y1="0" x2="250" y2="103" stroke="#B8944A" stroke-width="0.3"/>
+        <line x1="0" y1="0" x2="215" y2="165" stroke="#B8944A" stroke-width="0.3"/>
+        <line x1="0" y1="0" x2="165" y2="215" stroke="#B8944A" stroke-width="0.3"/>
+        <line x1="0" y1="0" x2="103" y2="250" stroke="#B8944A" stroke-width="0.3"/>
+        <line x1="0" y1="0" x2="35" y2="268" stroke="#B8944A" stroke-width="0.3"/>
+        <line x1="0" y1="0" x2="-35" y2="268" stroke="#B8944A" stroke-width="0.3"/>
+        <line x1="0" y1="0" x2="-103" y2="250" stroke="#B8944A" stroke-width="0.3"/>
+        <line x1="0" y1="0" x2="-165" y2="215" stroke="#B8944A" stroke-width="0.3"/>
+        <line x1="0" y1="0" x2="-215" y2="165" stroke="#B8944A" stroke-width="0.3"/>
+        <line x1="0" y1="0" x2="-250" y2="103" stroke="#B8944A" stroke-width="0.3"/>
+        <line x1="0" y1="0" x2="-268" y2="35" stroke="#B8944A" stroke-width="0.3"/>
+        <line x1="0" y1="0" x2="-268" y2="-35" stroke="#B8944A" stroke-width="0.3"/>
+        <line x1="0" y1="0" x2="-250" y2="-103" stroke="#B8944A" stroke-width="0.3"/>
+        <line x1="0" y1="0" x2="-215" y2="-165" stroke="#B8944A" stroke-width="0.3"/>
+        <line x1="0" y1="0" x2="-165" y2="-215" stroke="#B8944A" stroke-width="0.3"/>
+        <line x1="0" y1="0" x2="-103" y2="-250" stroke="#B8944A" stroke-width="0.3"/>
+        <line x1="0" y1="0" x2="-35" y2="-268" stroke="#B8944A" stroke-width="0.3"/>
+        <!-- Concentric circles -->
+        <circle cx="0" cy="0" r="100" stroke="#B8944A" stroke-width="0.4" fill="none"/>
+        <circle cx="0" cy="0" r="160" stroke="#B8944A" stroke-width="0.3" fill="none"/>
+        <circle cx="0" cy="0" r="220" stroke="#B8944A" stroke-width="0.3" fill="none"/>
+        <circle cx="0" cy="0" r="260" stroke="#B8944A" stroke-width="0.2" fill="none"/>
+      </g>
+    </svg>
+  </div>
+
+  <!-- Side Art Deco vertical patterns (left) -->
+  <div class="arch-pattern arch-pattern-left">
+    <svg width="30" height="360" viewBox="0 0 30 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g opacity="0.8">
+        <rect x="12" y="0" width="6" height="360" fill="none" stroke="#B8944A" stroke-width="0.6"/>
+        <line x1="15" y1="0" x2="15" y2="360" stroke="#B8944A" stroke-width="0.4"/>
+        <!-- Small diamonds along the line -->
+        <rect x="11" y="30" width="8" height="8" transform="rotate(45 15 34)" fill="#B8944A" opacity="0.3"/>
+        <rect x="11" y="75" width="8" height="8" transform="rotate(45 15 79)" fill="#B8944A" opacity="0.3"/>
+        <rect x="11" y="120" width="8" height="8" transform="rotate(45 15 124)" fill="#B8944A" opacity="0.3"/>
+        <rect x="11" y="165" width="8" height="8" transform="rotate(45 15 169)" fill="#B8944A" opacity="0.3"/>
+        <rect x="11" y="210" width="8" height="8" transform="rotate(45 15 214)" fill="#B8944A" opacity="0.3"/>
+        <rect x="11" y="255" width="8" height="8" transform="rotate(45 15 259)" fill="#B8944A" opacity="0.3"/>
+        <rect x="11" y="300" width="8" height="8" transform="rotate(45 15 304)" fill="#B8944A" opacity="0.3"/>
+        <rect x="11" y="345" width="8" height="8" transform="rotate(45 15 349)" fill="#B8944A" opacity="0.3"/>
+      </g>
+    </svg>
+  </div>
+
+  <!-- Side Art Deco vertical patterns (right) -->
+  <div class="arch-pattern arch-pattern-right">
+    <svg width="30" height="360" viewBox="0 0 30 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g opacity="0.8">
+        <rect x="12" y="0" width="6" height="360" fill="none" stroke="#B8944A" stroke-width="0.6"/>
+        <line x1="15" y1="0" x2="15" y2="360" stroke="#B8944A" stroke-width="0.4"/>
+        <rect x="11" y="30" width="8" height="8" transform="rotate(45 15 34)" fill="#B8944A" opacity="0.3"/>
+        <rect x="11" y="75" width="8" height="8" transform="rotate(45 15 79)" fill="#B8944A" opacity="0.3"/>
+        <rect x="11" y="120" width="8" height="8" transform="rotate(45 15 124)" fill="#B8944A" opacity="0.3"/>
+        <rect x="11" y="165" width="8" height="8" transform="rotate(45 15 169)" fill="#B8944A" opacity="0.3"/>
+        <rect x="11" y="210" width="8" height="8" transform="rotate(45 15 214)" fill="#B8944A" opacity="0.3"/>
+        <rect x="11" y="255" width="8" height="8" transform="rotate(45 15 259)" fill="#B8944A" opacity="0.3"/>
+        <rect x="11" y="300" width="8" height="8" transform="rotate(45 15 304)" fill="#B8944A" opacity="0.3"/>
+        <rect x="11" y="345" width="8" height="8" transform="rotate(45 15 349)" fill="#B8944A" opacity="0.3"/>
+      </g>
+    </svg>
+  </div>
+
+  <!-- Logo with Art Deco octagonal frame -->
+  <div class="logo-frame">
+    <div class="logo-deco-border">
+      <img src="logo-transparent.png" alt="APEX Real Estate">
+    </div>
+  </div>
+
+  <!-- Horizontal accent line mid -->
+  <div class="h-accent-line h-accent-mid"></div>
+
+  <!-- Location section -->
+  <div class="location-section">
+    <div class="location-divider">
+      <div class="location-divider-line"></div>
+      <div class="location-divider-dot"></div>
+      <div class="location-divider-line"></div>
+    </div>
+    <div class="location-text" id="lokacijaText">Centar, Novi Sad</div>
+    <div class="location-divider">
+      <div class="location-divider-line"></div>
+      <div class="location-divider-dot"></div>
+      <div class="location-divider-line"></div>
+    </div>
+  </div>
+
+  <!-- Property details -->
+  <div class="details-section">
+    <div class="detail-item">
+      <span class="detail-value" id="kvadraturaText">126 m²</span>
+      <span class="detail-label">Površina</span>
+    </div>
+    <div class="detail-divider"></div>
+    <div class="detail-item">
+      <span class="detail-value" id="spratText">3.</span>
+      <span class="detail-label">Sprat</span>
+    </div>
+    <div class="detail-divider"></div>
+    <div class="detail-item">
+      <span class="detail-value" id="sobeText">4</span>
+      <span class="detail-label">Sobe</span>
+    </div>
+  </div>
+
+  <!-- Diamond divider row -->
+  <div class="diamond-divider">
+    <div class="dd-line"></div>
+    <div class="dd-diamond"></div>
+    <div class="dd-diamond"></div>
+    <div class="dd-diamond"></div>
+    <div class="dd-line"></div>
+  </div>
+
+  <!-- Price section -->
+  <div class="price-section">
+    <div class="price-line"></div>
+    <div class="price-line-end"></div>
+    <span class="price-text" id="cenaText">185.000 €</span>
+    <div class="price-line-end"></div>
+    <div class="price-line right"></div>
+  </div>
+
+  <!-- Swipe hint -->
+  <div class="swipe-hint">
+    <span class="swipe-hint-text">Prevucite za više</span>
+    <div class="swipe-arrow">
+      <div class="arr"></div>
+      <div class="arr"></div>
+      <div class="arr"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+//  PODACI O NEKRETNINI – Izmeni ispod
+// ═══════════════════════════════════════════
+const nekretnina = {
+    lokacija:    "Centar, Novi Sad",
+    kvadratura:  "126",
+    sprat:       "3.",
+    sobe:        "4",
+    cena:        "185.000 €",
+    tip:         "Na prodaju"
+};
+
+// ── Auto-populate from data object ──
+document.getElementById('lokacijaText').textContent = nekretnina.lokacija;
+document.getElementById('kvadraturaText').textContent = nekretnina.kvadratura + ' m²';
+document.getElementById('spratText').textContent = nekretnina.sprat;
+document.getElementById('sobeText').textContent = nekretnina.sobe;
+document.getElementById('cenaText').textContent = nekretnina.cena;
+document.getElementById('tipLabel').textContent = nekretnina.tip;
+</script>
+</body>
+</html>

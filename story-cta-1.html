@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <title>APEX Story — Tražite stan?</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { width: 1080px; height: 1920px; overflow: hidden; font-family: 'Outfit', sans-serif; }
+
+        .story {
+            width: 1080px; height: 1920px;
+            position: relative;
+            background: linear-gradient(180deg, #0d0d0d 0%, #0a0a0a 30%, #0d0b08 70%, #0a0a0a 100%);
+            display: flex; flex-direction: column; align-items: center;
+            overflow: hidden;
+        }
+
+        /* Ambient glows */
+        .glow-1 { position: absolute; top: 200px; left: -100px; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(184,148,74,0.08) 0%, transparent 70%); }
+        .glow-2 { position: absolute; bottom: 400px; right: -150px; width: 600px; height: 600px; border-radius: 50%; background: radial-gradient(circle, rgba(184,148,74,0.06) 0%, transparent 70%); }
+        .glow-3 { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 800px; height: 800px; border-radius: 50%; background: radial-gradient(circle, rgba(184,148,74,0.04) 0%, transparent 60%); }
+
+        /* Gold top bar */
+        .top-bar { position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: linear-gradient(90deg, transparent, #B8944A, #d4af5a, #B8944A, transparent); }
+
+        /* Corner accents */
+        .corner { position: absolute; width: 80px; height: 80px; border-color: rgba(184,148,74,0.2); border-style: solid; border-width: 0; }
+        .corner.tl { top: 30px; left: 30px; border-top-width: 1px; border-left-width: 1px; }
+        .corner.tr { top: 30px; right: 30px; border-top-width: 1px; border-right-width: 1px; }
+        .corner.bl { bottom: 30px; left: 30px; border-bottom-width: 1px; border-left-width: 1px; }
+        .corner.br { bottom: 30px; right: 30px; border-bottom-width: 1px; border-right-width: 1px; }
+
+        /* Logo */
+        .logo { margin-top: 120px; }
+        .logo img { width: 200px; height: 200px; object-fit: contain; filter: drop-shadow(0 4px 40px rgba(184,148,74,0.2)); }
+
+        /* Decorative line */
+        .gold-line { width: 120px; height: 1px; background: linear-gradient(90deg, transparent, rgba(184,148,74,0.5), transparent); margin: 50px 0; }
+
+        /* Main headline */
+        .headline-area { text-align: center; padding: 0 80px; margin-top: 60px; }
+        .headline-sub { font-weight: 300; font-size: 22px; letter-spacing: 6px; text-transform: uppercase; color: rgba(184,148,74,0.7); margin-bottom: 30px; }
+        .headline {
+            font-family: 'DM Serif Display', serif;
+            font-size: 82px; line-height: 1.15;
+            color: #fff;
+        }
+        .headline .gold { color: #d4af5a; }
+        .headline-body {
+            font-weight: 300; font-size: 24px; color: rgba(255,255,255,0.5);
+            margin-top: 30px; line-height: 1.6;
+        }
+
+        /* Features */
+        .features {
+            margin-top: 80px; display: flex; flex-direction: column; gap: 22px;
+            padding: 0 120px; width: 100%;
+        }
+        .feature {
+            display: flex; align-items: center; gap: 18px;
+            font-weight: 400; font-size: 22px; color: rgba(255,255,255,0.6);
+        }
+        .feature-icon {
+            width: 36px; height: 36px; border-radius: 50%;
+            border: 1.5px solid rgba(184,148,74,0.4);
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .feature-icon svg { width: 16px; height: 16px; stroke: #B8944A; stroke-width: 2.5; fill: none; }
+
+        /* CTA Button */
+        .cta-area { margin-top: auto; margin-bottom: 200px; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+        .cta-btn {
+            display: flex; align-items: center; gap: 14px;
+            padding: 26px 70px;
+            background: linear-gradient(135deg, #B8944A 0%, #d4af5a 50%, #B8944A 100%);
+            border-radius: 60px; cursor: pointer;
+            font-weight: 700; font-size: 20px; letter-spacing: 3px; text-transform: uppercase;
+            color: #0a0a0a;
+            box-shadow: 0 8px 40px rgba(184,148,74,0.3), 0 2px 10px rgba(184,148,74,0.2);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .cta-btn svg { width: 20px; height: 20px; stroke: #0a0a0a; stroke-width: 2.5; fill: none; }
+        .cta-sub { font-weight: 300; font-size: 16px; color: rgba(255,255,255,0.3); letter-spacing: 2px; }
+
+        /* Noise */
+        .noise { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); pointer-events: none; }
+    </style>
+</head>
+<body>
+<div class="story">
+    <div class="noise"></div>
+    <div class="glow-1"></div><div class="glow-2"></div><div class="glow-3"></div>
+    <div class="top-bar"></div>
+    <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+
+    <div class="logo"><img src="logo-transparent.png" alt="APEX"></div>
+
+    <div class="gold-line"></div>
+
+    <div class="headline-area">
+        <div class="headline-sub">Apex Real Estate</div>
+        <div class="headline">Tražite <span class="gold">savršen</span> stan?</div>
+        <div class="headline-body">Pronađite ga sa nama.</div>
+    </div>
+
+    <div class="features">
+        <div class="feature">
+            <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
+            Široka ponuda nekretnina
+        </div>
+        <div class="feature">
+            <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
+            Stručni tim agenata
+        </div>
+        <div class="feature">
+            <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
+            Podrška od pretrage do useljenja
+        </div>
+    </div>
+
+    <div class="cta-area">
+        <div class="cta-btn">
+            Pošaljite nam poruku
+            <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+        <div class="cta-sub">Javite nam se u DM ✉</div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,2136 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APEX Real Estate — Instagram Post Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700;800;900&family=DM+Serif+Display&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================
+           DESIGN TOKENS
+           ============================================ */
+        :root {
+            --gold: #B8944A;
+            --gold-light: #d4af5a;
+            --gold-dark: #8a6d35;
+            --bg-dark: #0a0a0a;
+            --bg-card: #141414;
+            --bg-card-hover: #1a1a1a;
+            --bg-input: #1e1e1e;
+            --border: rgba(184, 148, 74, 0.15);
+            --border-focus: rgba(184, 148, 74, 0.5);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255,255,255,0.6);
+            --text-muted: rgba(255,255,255,0.35);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --shadow-card: 0 4px 30px rgba(0,0,0,0.4);
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', 'Outfit', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ============================================
+           LAYOUT
+           ============================================ */
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 40px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(10,10,10,0.9);
+            backdrop-filter: blur(20px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .app-header .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .app-header .logo-area img {
+            height: 44px;
+            width: 44px;
+            object-fit: contain;
+        }
+
+        .app-header .logo-area h1 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 20px;
+            letter-spacing: 1px;
+        }
+
+        .app-header .logo-area h1 span {
+            color: var(--gold);
+        }
+
+        .app-header .header-badge {
+            padding: 6px 16px;
+            background: linear-gradient(135deg, var(--gold), var(--gold-light));
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #0a0a0a;
+        }
+
+        .app-container {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            min-height: calc(100vh - 85px);
+        }
+
+        /* ============================================
+           SIDEBAR - FORM
+           ============================================ */
+        .sidebar {
+            padding: 30px 28px;
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            max-height: calc(100vh - 85px);
+            background: var(--bg-card);
+        }
+
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-track { background: transparent; }
+        .sidebar::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 10px; }
+
+        .section-title {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, var(--border), transparent);
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            transition: var(--transition);
+            outline: none;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px rgba(184, 148, 74, 0.1);
+        }
+
+        .form-group select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23B8944A' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 40px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+        }
+
+        /* Image Upload */
+        .upload-zone {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-md);
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .upload-zone:hover {
+            border-color: var(--gold);
+            background: rgba(184, 148, 74, 0.03);
+        }
+
+        .upload-zone .upload-icon {
+            font-size: 36px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .upload-zone p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .upload-zone small {
+            font-size: 11px;
+            color: var(--text-muted);
+            display: block;
+            margin-top: 6px;
+        }
+
+        .upload-zone input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        /* Image thumbnails */
+        .image-thumbs {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .image-thumb {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .image-thumb.active {
+            border-color: var(--gold);
+        }
+
+        .image-thumb.cover-thumb {
+            border-color: var(--gold-light);
+            box-shadow: 0 0 12px rgba(184, 148, 74, 0.3);
+        }
+
+        .image-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .image-thumb .thumb-badge {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            background: var(--gold);
+            color: #0a0a0a;
+            font-size: 8px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+            letter-spacing: 1px;
+        }
+
+        .image-thumb .remove-btn {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 20px;
+            height: 20px;
+            background: rgba(0,0,0,0.7);
+            border: none;
+            border-radius: 50%;
+            color: #fff;
+            font-size: 12px;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+
+        .image-thumb:hover .remove-btn { display: flex; }
+
+        /* Template Selector */
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .template-option {
+            position: relative;
+            aspect-ratio: 4/5;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            border: 2px solid var(--border);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .template-option:hover { border-color: rgba(184, 148, 74, 0.4); }
+        .template-option.active { border-color: var(--gold); box-shadow: 0 0 15px rgba(184, 148, 74, 0.2); }
+
+        .template-option .tpl-preview {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 8px;
+            font-size: 7px;
+            font-weight: 600;
+            color: #fff;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .template-option .tpl-name {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 6px;
+            background: rgba(0,0,0,0.8);
+            font-size: 9px;
+            font-weight: 600;
+            text-align: center;
+            color: var(--gold);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            width: 100%;
+            padding: 16px 24px;
+            background: linear-gradient(135deg, var(--gold), var(--gold-light));
+            border: none;
+            border-radius: var(--radius-sm);
+            color: #0a0a0a;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(184, 148, 74, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 14px 24px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 500;
+            font-size: 13px;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .spacer { margin-top: 24px; }
+
+        /* ============================================
+           MAIN - PREVIEW AREA
+           ============================================ */
+        .main-area {
+            padding: 30px;
+            overflow-y: auto;
+            max-height: calc(100vh - 85px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .main-area::-webkit-scrollbar { width: 6px; }
+        .main-area::-webkit-scrollbar-track { background: transparent; }
+        .main-area::-webkit-scrollbar-thumb { background: rgba(184, 148, 74, 0.2); border-radius: 10px; }
+
+        .preview-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 520px;
+        }
+
+        .preview-header h2 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 500;
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+
+        .preview-header .slide-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .preview-header .slide-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            transition: var(--transition);
+        }
+
+        .preview-header .slide-dot.active {
+            background: var(--gold);
+            width: 20px;
+            border-radius: 3px;
+        }
+
+        /* Preview Canvas Container */
+        .preview-container {
+            width: 100%;
+            max-width: 432px; /* 1080/2.5 */
+            aspect-ratio: 4/5;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-card), 0 0 60px rgba(184, 148, 74, 0.06);
+            position: relative;
+            background: #000;
+        }
+
+        .preview-container canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* Navigation arrows */
+        .preview-nav {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        .nav-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            font-size: 18px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-btn:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+            background: rgba(184, 148, 74, 0.05);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .slide-count {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            min-width: 60px;
+            text-align: center;
+        }
+
+        /* All slides strip */
+        .all-slides-strip {
+            display: flex;
+            gap: 12px;
+            padding: 16px 0;
+            overflow-x: auto;
+            max-width: 100%;
+        }
+
+        .all-slides-strip::-webkit-scrollbar { height: 4px; }
+        .all-slides-strip::-webkit-scrollbar-track { background: transparent; }
+        .all-slides-strip::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 10px; }
+
+        .strip-thumb {
+            min-width: 80px;
+            width: 80px;
+            aspect-ratio: 4/5;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            border: 2px solid var(--border);
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .strip-thumb.active { border-color: var(--gold); }
+        .strip-thumb canvas { width: 100%; height: 100%; display: block; }
+        .strip-thumb .strip-num {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            background: rgba(0,0,0,0.7);
+            color: var(--gold);
+            font-size: 8px;
+            font-weight: 700;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+        /* Progress / Loading */
+        .progress-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(10,10,10,0.9);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .progress-overlay.visible { display: flex; }
+
+        .progress-spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid var(--border);
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .progress-text {
+            font-family: 'Outfit', sans-serif;
+            font-size: 16px;
+            font-weight: 400;
+            color: var(--text-secondary);
+            letter-spacing: 1px;
+        }
+
+        /* Empty state */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 60px 40px;
+            gap: 16px;
+        }
+
+        .empty-state .empty-icon {
+            font-size: 64px;
+            opacity: 0.3;
+        }
+
+        .empty-state p {
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* Divider */
+        .form-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border), transparent);
+            margin: 24px 0;
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 14px 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--gold);
+            border-radius: var(--radius-md);
+            color: var(--gold);
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 500;
+        }
+
+        .toast.visible {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Cover image selector */
+        .cover-select-hint {
+            font-size: 11px;
+            color: var(--gold);
+            margin-bottom: 8px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        /* Checkbox toggle */
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+        }
+
+        .toggle-row label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 0 !important;
+        }
+
+        .toggle-switch {
+            width: 44px;
+            height: 24px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .toggle-switch.active {
+            background: var(--gold);
+            border-color: var(--gold);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #fff;
+            transition: var(--transition);
+        }
+
+        .toggle-switch.active::after {
+            left: 22px;
+        }
+
+        /* Logo Position Selector */
+        .logo-pos-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .logo-pos-btn {
+            padding: 8px 4px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-muted);
+            font-size: 10px;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            letter-spacing: 0.5px;
+        }
+
+        .logo-pos-btn.active {
+            border-color: var(--gold);
+            color: var(--gold);
+            background: rgba(184, 148, 74, 0.08);
+        }
+
+        .logo-pos-btn:hover {
+            border-color: rgba(184, 148, 74, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="app-header">
+    <div class="logo-area">
+        <img src="logo-transparent.png" alt="APEX">
+        <h1><span>APEX</span> Post Generator</h1>
+    </div>
+    <div class="header-badge">Instagram</div>
+</header>
+
+<div class="app-container">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <!-- PROPERTY DATA -->
+        <div class="section-title">Podaci o nekretnini</div>
+
+        <div class="form-group">
+            <label>Naslov / Lokacija</label>
+            <input type="text" id="propTitle" placeholder="npr. Liman IV, Novi Sad" value="Liman IV, Novi Sad">
+        </div>
+
+        <div class="form-group">
+            <label>Podnaslov (opciono)</label>
+            <input type="text" id="propSubtitle" placeholder="npr. Luksuzan stan sa pogledom">
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Kvadratura (m²)</label>
+                <input type="text" id="propSize" placeholder="85" value="85">
+            </div>
+            <div class="form-group">
+                <label>Cena</label>
+                <input type="text" id="propPrice" placeholder="125.000 €" value="125.000 €">
+            </div>
+        </div>
+
+        <div class="form-row-3">
+            <div class="form-group">
+                <label>Sobe</label>
+                <input type="text" id="propRooms" placeholder="3" value="3">
+            </div>
+            <div class="form-group">
+                <label>Kupatila</label>
+                <input type="text" id="propBath" placeholder="1" value="1">
+            </div>
+            <div class="form-group">
+                <label>Sprat</label>
+                <input type="text" id="propFloor" placeholder="3." value="3.">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Tip oglasa</label>
+                <select id="propType">
+                    <option value="PRODAJA">Prodaja</option>
+                    <option value="IZDAVANJE">Izdavanje</option>
+                    <option value="PREMIUM">Premium</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Kontakt telefon</label>
+                <input type="text" id="propPhone" placeholder="+381 63 111 9000" value="+381 63 111 9000">
+            </div>
+        </div>
+
+        <div class="form-divider"></div>
+
+        <!-- TEMPLATE SELECTION -->
+        <div class="section-title">Stil template-a</div>
+
+        <div class="template-grid" id="templateGrid">
+            <!-- Template 1: Dark Overlay Bottom -->
+            <div class="template-option active" data-template="1" onclick="selectTemplate(1)">
+                <div class="tpl-preview" style="background: linear-gradient(180deg, #667 0%, #111 100%);">
+                </div>
+                <div class="tpl-name">Dark Bottom</div>
+            </div>
+            <!-- Template 2: Minimal Side -->
+            <div class="template-option" data-template="2" onclick="selectTemplate(2)">
+                <div class="tpl-preview" style="background: linear-gradient(90deg, #111 0%, #111 35%, #667 35%);">
+                </div>
+                <div class="tpl-name">Side Panel</div>
+            </div>
+            <!-- Template 3: Full Overlay -->
+            <div class="template-option" data-template="3" onclick="selectTemplate(3)">
+                <div class="tpl-preview" style="background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.7) 100%); border: 2px solid rgba(184,148,74,0.3);">
+                </div>
+                <div class="tpl-name">Elegant Frame</div>
+            </div>
+            <!-- Template 4: Bold Tag -->
+            <div class="template-option" data-template="4" onclick="selectTemplate(4)">
+                <div class="tpl-preview" style="background: linear-gradient(170deg, #B8944A 0%, #B8944A 25%, #222 25%);">
+                </div>
+                <div class="tpl-name">Bold Tag</div>
+            </div>
+            <!-- Template 5: Minimal Clean -->
+            <div class="template-option" data-template="5" onclick="selectTemplate(5)">
+                <div class="tpl-preview" style="background: linear-gradient(180deg, #eee 0%, #ddd 100%);">
+                </div>
+                <div class="tpl-name">Light Clean</div>
+            </div>
+            <!-- Template 6: Magazine -->
+            <div class="template-option" data-template="6" onclick="selectTemplate(6)">
+                <div class="tpl-preview" style="background: linear-gradient(180deg, #333 0%, #111 50%, #B8944A 90%, #B8944A 100%);">
+                </div>
+                <div class="tpl-name">Magazine</div>
+            </div>
+        </div>
+
+        <div class="form-divider"></div>
+
+        <!-- IMAGE UPLOAD -->
+        <div class="section-title">Fotografije</div>
+
+        <div class="upload-zone" id="uploadZone">
+            <span class="upload-icon">📸</span>
+            <p>Prevuci slike ovde ili klikni</p>
+            <small>Prva slika = Cover • Ostale = Galerija sa logom</small>
+            <input type="file" id="fileInput" accept="image/*" multiple>
+        </div>
+
+        <div class="cover-select-hint" id="coverHint" style="display:none;">
+            ★ Klikni na sliku da je postaviš kao cover
+        </div>
+
+        <div class="image-thumbs" id="imageThumbs"></div>
+
+        <div class="form-divider"></div>
+
+        <!-- WATERMARK OPTIONS -->
+        <div class="section-title">Logo & Watermark</div>
+
+        <div class="form-group">
+            <label>Pozicija loga (galerija slike)</label>
+        </div>
+        <div class="logo-pos-grid" id="logoPosGrid">
+            <div class="logo-pos-btn" data-pos="top-left" onclick="setLogoPos('top-left')">↖ Gore L</div>
+            <div class="logo-pos-btn" data-pos="top-right" onclick="setLogoPos('top-right')">↗ Gore D</div>
+            <div class="logo-pos-btn active" data-pos="bottom-left" onclick="setLogoPos('bottom-left')">↙ Dole L</div>
+            <div class="logo-pos-btn" data-pos="bottom-right" onclick="setLogoPos('bottom-right')">↘ Dole D</div>
+        </div>
+
+        <div class="form-group">
+            <label>Veličina loga</label>
+            <input type="range" id="logoSize" min="60" max="200" value="120" style="accent-color: var(--gold);">
+        </div>
+
+        <div class="toggle-row">
+            <label>Prikaži cenu na cover-u</label>
+            <div class="toggle-switch active" id="togglePrice" onclick="toggleSwitch('togglePrice')"></div>
+        </div>
+
+        <div class="toggle-row">
+            <label>Prikaži telefon na cover-u</label>
+            <div class="toggle-switch active" id="togglePhone" onclick="toggleSwitch('togglePhone')"></div>
+        </div>
+
+        <div class="spacer"></div>
+
+        <button class="btn-primary" id="generateBtn" onclick="generateAll()">
+            <span>⚡</span> Generiši sve slike
+        </button>
+
+        <button class="btn-secondary" id="downloadBtn" onclick="downloadAll()" style="display:none;">
+            <span>📥</span> Preuzmi sve slike (.zip)
+        </button>
+
+        <button class="btn-secondary" onclick="downloadSingle()">
+            <span>💾</span> Preuzmi trenutnu sliku
+        </button>
+
+    </aside>
+
+    <!-- MAIN PREVIEW -->
+    <main class="main-area" id="mainArea">
+
+        <div class="empty-state" id="emptyState">
+            <div class="empty-icon">🏠</div>
+            <p>Dodaj fotografije nekretnine<br>i popuni podatke za generisanje<br>Instagram postova</p>
+        </div>
+
+        <div id="previewSection" style="display:none; width:100%; display:none; flex-direction:column; align-items:center; gap:20px;">
+            <div class="preview-header">
+                <h2 id="previewLabel">Cover slajd</h2>
+                <div class="slide-indicator" id="slideIndicator"></div>
+            </div>
+
+            <div class="preview-container" id="previewContainer">
+                <canvas id="previewCanvas" width="1080" height="1350"></canvas>
+            </div>
+
+            <div class="preview-nav">
+                <button class="nav-btn" id="prevBtn" onclick="prevSlide()">‹</button>
+                <span class="slide-count" id="slideCount">1 / 1</span>
+                <button class="nav-btn" id="nextBtn" onclick="nextSlide()">›</button>
+            </div>
+
+            <div class="all-slides-strip" id="slidesStrip"></div>
+        </div>
+
+    </main>
+</div>
+
+<!-- Progress Overlay -->
+<div class="progress-overlay" id="progressOverlay">
+    <div class="progress-spinner"></div>
+    <div class="progress-text" id="progressText">Generisanje slika...</div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- JSZip CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<script>
+    // ============================================
+    // STATE
+    // ============================================
+    const state = {
+        images: [],          // { file, url, img (loaded Image object) }
+        coverIndex: 0,
+        currentSlide: 0,
+        selectedTemplate: 1,
+        logoPos: 'bottom-left',
+        logoSize: 120,
+        showPrice: true,
+        showPhone: true,
+        generated: false,
+        canvasBlobs: [],     // generated blobs for download
+        logoImg: null,
+    };
+
+    // Load logo
+    const logoImage = new Image();
+    logoImage.crossOrigin = 'anonymous';
+    logoImage.onload = () => { state.logoImg = logoImage; };
+    logoImage.src = 'logo-transparent.png';
+
+    // ============================================
+    // IMAGE UPLOAD
+    // ============================================
+    const fileInput = document.getElementById('fileInput');
+
+    fileInput.addEventListener('change', (e) => {
+        const files = Array.from(e.target.files);
+        files.forEach(file => {
+            if (!file.type.startsWith('image/')) return;
+            const url = URL.createObjectURL(file);
+            const img = new Image();
+            img.onload = () => {
+                state.images.push({ file, url, img });
+                renderThumbs();
+                if (state.images.length === 1) {
+                    showPreview();
+                }
+                generateAll();
+            };
+            img.src = url;
+        });
+        e.target.value = '';
+    });
+
+    // Drag and drop
+    const uploadZone = document.getElementById('uploadZone');
+    uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.style.borderColor = '#B8944A'; });
+    uploadZone.addEventListener('dragleave', () => { uploadZone.style.borderColor = ''; });
+    uploadZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadZone.style.borderColor = '';
+        const files = Array.from(e.dataTransfer.files);
+        files.forEach(file => {
+            if (!file.type.startsWith('image/')) return;
+            const url = URL.createObjectURL(file);
+            const img = new Image();
+            img.onload = () => {
+                state.images.push({ file, url, img });
+                renderThumbs();
+                if (state.images.length === 1) showPreview();
+                generateAll();
+            };
+            img.src = url;
+        });
+    });
+
+    function renderThumbs() {
+        const container = document.getElementById('imageThumbs');
+        const hint = document.getElementById('coverHint');
+        container.innerHTML = '';
+        hint.style.display = state.images.length > 1 ? 'block' : 'none';
+
+        state.images.forEach((item, i) => {
+            const div = document.createElement('div');
+            div.className = 'image-thumb' + (i === state.coverIndex ? ' cover-thumb' : '');
+            div.onclick = () => { state.coverIndex = i; renderThumbs(); generateAll(); };
+
+            const img = document.createElement('img');
+            img.src = item.url;
+            div.appendChild(img);
+
+            if (i === state.coverIndex) {
+                const badge = document.createElement('div');
+                badge.className = 'thumb-badge';
+                badge.textContent = 'COVER';
+                div.appendChild(badge);
+            }
+
+            const rmBtn = document.createElement('button');
+            rmBtn.className = 'remove-btn';
+            rmBtn.textContent = '×';
+            rmBtn.onclick = (e) => {
+                e.stopPropagation();
+                URL.revokeObjectURL(item.url);
+                state.images.splice(i, 1);
+                if (state.coverIndex >= state.images.length) state.coverIndex = Math.max(0, state.images.length - 1);
+                if (state.coverIndex > i) state.coverIndex--;
+                renderThumbs();
+                if (state.images.length === 0) hidePreview();
+                else generateAll();
+            };
+            div.appendChild(rmBtn);
+
+            container.appendChild(div);
+        });
+    }
+
+    // ============================================
+    // TEMPLATE SELECTION
+    // ============================================
+    function selectTemplate(n) {
+        state.selectedTemplate = n;
+        document.querySelectorAll('.template-option').forEach(el => {
+            el.classList.toggle('active', parseInt(el.dataset.template) === n);
+        });
+        if (state.images.length > 0) generateAll();
+    }
+
+    // ============================================
+    // TOGGLE SWITCHES
+    // ============================================
+    function toggleSwitch(id) {
+        const el = document.getElementById(id);
+        el.classList.toggle('active');
+        if (id === 'togglePrice') state.showPrice = el.classList.contains('active');
+        if (id === 'togglePhone') state.showPhone = el.classList.contains('active');
+        if (state.images.length > 0) generateAll();
+    }
+
+    function setLogoPos(pos) {
+        state.logoPos = pos;
+        document.querySelectorAll('.logo-pos-btn').forEach(el => {
+            el.classList.toggle('active', el.dataset.pos === pos);
+        });
+        if (state.images.length > 0) generateAll();
+    }
+
+    // Logo size
+    document.getElementById('logoSize').addEventListener('input', (e) => {
+        state.logoSize = parseInt(e.target.value);
+        if (state.images.length > 0) generateAll();
+    });
+
+    // Input change listeners
+    ['propTitle', 'propSubtitle', 'propSize', 'propPrice', 'propRooms', 'propBath', 'propFloor', 'propType', 'propPhone'].forEach(id => {
+        document.getElementById(id).addEventListener('input', () => {
+            if (state.images.length > 0) generateAll();
+        });
+    });
+
+    // ============================================
+    // SHOW / HIDE PREVIEW
+    // ============================================
+    function showPreview() {
+        document.getElementById('emptyState').style.display = 'none';
+        const ps = document.getElementById('previewSection');
+        ps.style.display = 'flex';
+    }
+
+    function hidePreview() {
+        document.getElementById('emptyState').style.display = 'flex';
+        document.getElementById('previewSection').style.display = 'none';
+    }
+
+    // ============================================
+    // NAVIGATION
+    // ============================================
+    function prevSlide() {
+        if (state.currentSlide > 0) {
+            state.currentSlide--;
+            renderCurrentSlide();
+        }
+    }
+
+    function nextSlide() {
+        if (state.currentSlide < state.images.length - 1) {
+            state.currentSlide++;
+            renderCurrentSlide();
+        }
+    }
+
+    function goToSlide(i) {
+        state.currentSlide = i;
+        renderCurrentSlide();
+    }
+
+    function renderCurrentSlide() {
+        const total = state.images.length;
+        const cur = state.currentSlide;
+
+        document.getElementById('slideCount').textContent = `${cur + 1} / ${total}`;
+        document.getElementById('prevBtn').disabled = cur === 0;
+        document.getElementById('nextBtn').disabled = cur === total - 1;
+
+        // Determine if this is cover slide
+        const isCover = (cur === 0); // reordered: cover is always first in output
+        document.getElementById('previewLabel').textContent = isCover ? 'Cover slajd' : `Slajd ${cur + 1}`;
+
+        // Render on main canvas
+        const canvas = document.getElementById('previewCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Get the reordered index
+        const reordered = getReorderedImages();
+        const imgData = reordered[cur];
+
+        if (isCover) {
+            drawCover(ctx, canvas, imgData.img);
+        } else {
+            drawGallerySlide(ctx, canvas, imgData.img);
+        }
+
+        // Update strip
+        document.querySelectorAll('.strip-thumb').forEach((el, i) => {
+            el.classList.toggle('active', i === cur);
+        });
+
+        // Update dots
+        const indicator = document.getElementById('slideIndicator');
+        indicator.innerHTML = '';
+        for (let i = 0; i < total; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'slide-dot' + (i === cur ? ' active' : '');
+            indicator.appendChild(dot);
+        }
+    }
+
+    function getReorderedImages() {
+        if (state.images.length === 0) return [];
+        const reordered = [];
+        reordered.push(state.images[state.coverIndex]);
+        state.images.forEach((item, i) => {
+            if (i !== state.coverIndex) reordered.push(item);
+        });
+        return reordered;
+    }
+
+    // ============================================
+    // GENERATE ALL SLIDES
+    // ============================================
+    function generateAll() {
+        if (state.images.length === 0) return;
+
+        showPreview();
+        const reordered = getReorderedImages();
+
+        // Build strip
+        const strip = document.getElementById('slidesStrip');
+        strip.innerHTML = '';
+
+        state.canvasBlobs = new Array(reordered.length).fill(null);
+
+        reordered.forEach((item, i) => {
+            const thumb = document.createElement('div');
+            thumb.className = 'strip-thumb' + (i === state.currentSlide ? ' active' : '');
+            thumb.onclick = () => goToSlide(i);
+
+            const miniCanvas = document.createElement('canvas');
+            miniCanvas.width = 216; // 1080/5
+            miniCanvas.height = 270; // 1350/5
+            const miniCtx = miniCanvas.getContext('2d');
+
+            // Draw thumbnail
+            if (i === 0) {
+                drawCover(miniCtx, miniCanvas, item.img);
+            } else {
+                drawGallerySlide(miniCtx, miniCanvas, item.img);
+            }
+
+            thumb.appendChild(miniCanvas);
+
+            const num = document.createElement('div');
+            num.className = 'strip-num';
+            num.textContent = i === 0 ? 'C' : i;
+            thumb.appendChild(num);
+
+            strip.appendChild(thumb);
+
+            // Also generate full-res blob
+            const fullCanvas = document.createElement('canvas');
+            fullCanvas.width = 1080;
+            fullCanvas.height = 1350;
+            const fullCtx = fullCanvas.getContext('2d');
+
+            if (i === 0) {
+                drawCover(fullCtx, fullCanvas, item.img);
+            } else {
+                drawGallerySlide(fullCtx, fullCanvas, item.img);
+            }
+
+            fullCanvas.toBlob((blob) => {
+                state.canvasBlobs[i] = blob;
+            }, 'image/png');
+        });
+
+        // Show download button
+        document.getElementById('downloadBtn').style.display = 'flex';
+        state.generated = true;
+
+        // Render current
+        renderCurrentSlide();
+    }
+
+    // ============================================
+    // DRAW COVER — Multiple templates
+    // ============================================
+    function drawCover(ctx, canvas, sourceImg) {
+        const w = canvas.width;
+        const h = canvas.height;
+        const data = getFormData();
+
+        // Store ref so templates can access it
+        canvas._currentImg = sourceImg;
+        if (ctx.canvas) ctx.canvas._currentImg = sourceImg;
+
+        // Draw image covering entire canvas (base layer for most templates)
+        drawImageCover(ctx, sourceImg, w, h);
+
+        switch (state.selectedTemplate) {
+            case 1: drawCoverTemplate1(ctx, w, h, data); break;
+            case 2: drawCoverTemplate2(ctx, w, h, data, sourceImg); break;
+            case 3: drawCoverTemplate3(ctx, w, h, data); break;
+            case 4: drawCoverTemplate4(ctx, w, h, data, sourceImg); break;
+            case 5: drawCoverTemplate5(ctx, w, h, data, sourceImg); break;
+            case 6: drawCoverTemplate6(ctx, w, h, data); break;
+        }
+    }
+
+    function getFormData() {
+        return {
+            title: document.getElementById('propTitle').value || 'Lokacija',
+            subtitle: document.getElementById('propSubtitle').value || '',
+            size: document.getElementById('propSize').value || '',
+            price: document.getElementById('propPrice').value || '',
+            rooms: document.getElementById('propRooms').value || '',
+            bath: document.getElementById('propBath').value || '',
+            floor: document.getElementById('propFloor').value || '',
+            type: document.getElementById('propType').value || 'PRODAJA',
+            phone: document.getElementById('propPhone').value || '',
+        };
+    }
+
+    // Helper: draw image to cover canvas (cover crop)
+    function drawImageCover(ctx, img, cw, ch) {
+        const iw = img.naturalWidth;
+        const ih = img.naturalHeight;
+        const canvasAspect = cw / ch;
+        const imgAspect = iw / ih;
+
+        let sx, sy, sw, sh;
+        if (imgAspect > canvasAspect) {
+            sh = ih;
+            sw = ih * canvasAspect;
+            sx = (iw - sw) / 2;
+            sy = 0;
+        } else {
+            sw = iw;
+            sh = iw / canvasAspect;
+            sx = 0;
+            sy = (ih - sh) / 2;
+        }
+        ctx.drawImage(img, sx, sy, sw, sh, 0, 0, cw, ch);
+    }
+
+    // Helper: scale font size
+    function sf(canvas, baseSize) {
+        return Math.round(baseSize * (canvas.width / 1080));
+    }
+
+    // Helper: scale value
+    function sv(canvas, baseVal) {
+        return baseVal * (canvas.width / 1080);
+    }
+
+    // ----- TEMPLATE 1: Dark Gradient Bottom -----
+    function drawCoverTemplate1(ctx, w, h, d) {
+        // Dark gradient from bottom
+        const grad = ctx.createLinearGradient(0, h * 0.35, 0, h);
+        grad.addColorStop(0, 'rgba(0,0,0,0)');
+        grad.addColorStop(0.4, 'rgba(0,0,0,0.3)');
+        grad.addColorStop(0.7, 'rgba(0,0,0,0.7)');
+        grad.addColorStop(1, 'rgba(0,0,0,0.92)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, w, h);
+
+        // Subtle top darkening
+        const topGrad = ctx.createLinearGradient(0, 0, 0, h * 0.2);
+        topGrad.addColorStop(0, 'rgba(0,0,0,0.4)');
+        topGrad.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = topGrad;
+        ctx.fillRect(0, 0, w, h * 0.2);
+
+        const s = (v) => v * (w / 1080);
+
+        // Tag badge (top right)
+        const tagText = d.type;
+        ctx.font = `800 ${s(16)}px 'Outfit', sans-serif`;
+        const tagW = ctx.measureText(tagText).width + s(36);
+        const tagH = s(38);
+        const tagX = w - tagW - s(50);
+        const tagY = s(50);
+
+        ctx.fillStyle = '#B8944A';
+        roundRect(ctx, tagX, tagY, tagW, tagH, s(6));
+        ctx.fill();
+
+        ctx.fillStyle = '#000';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.font = `800 ${s(16)}px 'Outfit', sans-serif`;
+        ctx.letterSpacing = `${s(2)}px`;
+        ctx.fillText(tagText, tagX + tagW / 2, tagY + tagH / 2);
+        ctx.letterSpacing = '0px';
+
+        // Title
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'alphabetic';
+        const titleY = h - s(300);
+        ctx.font = `700 ${s(56)}px 'DM Serif Display', serif`;
+        ctx.fillStyle = '#ffffff';
+        wrapText(ctx, d.title.toUpperCase(), s(60), titleY, w - s(120), s(66));
+
+        // Subtitle
+        if (d.subtitle) {
+            ctx.font = `300 ${s(22)}px 'Outfit', sans-serif`;
+            ctx.fillStyle = 'rgba(255,255,255,0.6)';
+            ctx.fillText(d.subtitle, s(60), titleY + s(40));
+        }
+
+        // Details row
+        const detY = h - s(170);
+        ctx.font = `700 ${s(38)}px 'Outfit', sans-serif`;
+        ctx.fillStyle = '#fff';
+        let detX = s(60);
+
+        if (d.size) {
+            ctx.fillText(d.size, detX, detY);
+            const numW = ctx.measureText(d.size).width;
+            ctx.font = `300 ${s(18)}px 'Outfit', sans-serif`;
+            ctx.fillStyle = 'rgba(255,255,255,0.5)';
+            ctx.fillText('m²', detX + numW + s(6), detY);
+            detX += numW + s(50);
+        }
+
+        // Separator dot
+        ctx.fillStyle = '#B8944A';
+        ctx.beginPath();
+        ctx.arc(detX, detY - s(10), s(4), 0, Math.PI * 2);
+        ctx.fill();
+        detX += s(30);
+
+        if (d.rooms) {
+            ctx.font = `700 ${s(38)}px 'Outfit', sans-serif`;
+            ctx.fillStyle = '#fff';
+            ctx.fillText(d.rooms, detX, detY);
+            const numW = ctx.measureText(d.rooms).width;
+            ctx.font = `300 ${s(18)}px 'Outfit', sans-serif`;
+            ctx.fillStyle = 'rgba(255,255,255,0.5)';
+            ctx.fillText('sobe', detX + numW + s(6), detY);
+            detX += numW + s(70);
+        }
+
+        // Separator dot
+        ctx.fillStyle = '#B8944A';
+        ctx.beginPath();
+        ctx.arc(detX, detY - s(10), s(4), 0, Math.PI * 2);
+        ctx.fill();
+        detX += s(30);
+
+        if (d.bath) {
+            ctx.font = `700 ${s(38)}px 'Outfit', sans-serif`;
+            ctx.fillStyle = '#fff';
+            ctx.fillText(d.bath, detX, detY);
+            const numW = ctx.measureText(d.bath).width;
+            ctx.font = `300 ${s(18)}px 'Outfit', sans-serif`;
+            ctx.fillStyle = 'rgba(255,255,255,0.5)';
+            ctx.fillText('kup.', detX + numW + s(6), detY);
+        }
+
+        // Divider line
+        const lineY = h - s(115);
+        const lineGrad = ctx.createLinearGradient(s(60), 0, w - s(60), 0);
+        lineGrad.addColorStop(0, 'rgba(184,148,74,0.5)');
+        lineGrad.addColorStop(1, 'rgba(184,148,74,0.05)');
+        ctx.strokeStyle = lineGrad;
+        ctx.lineWidth = s(1.5);
+        ctx.beginPath();
+        ctx.moveTo(s(60), lineY);
+        ctx.lineTo(w - s(60), lineY);
+        ctx.stroke();
+
+        // Price
+        if (state.showPrice && d.price) {
+            ctx.font = `800 ${s(44)}px 'Outfit', sans-serif`;
+            ctx.fillStyle = '#B8944A';
+            ctx.fillText(d.price, s(60), h - s(65));
+        }
+
+        // Phone
+        if (state.showPhone && d.phone) {
+            ctx.font = `500 ${s(18)}px 'Outfit', sans-serif`;
+            ctx.fillStyle = 'rgba(255,255,255,0.5)';
+            ctx.textAlign = 'right';
+            ctx.fillText(d.phone, w - s(60), h - s(70));
+            ctx.textAlign = 'left';
+        }
+
+        // Logo (bottom left small)
+        drawLogoOnCanvas(ctx, w, h, s(80), 'bottom-left', s(20));
+    }
+
+    // ----- TEMPLATE 2: Side Panel -----
+    function drawCoverTemplate2(ctx, w, h, d, sourceImg) {
+        const s = (v) => v * (w / 1080);
+        const panelW = w * 0.38;
+        const imgSrc = sourceImg || state.images[state.coverIndex]?.img;
+
+        // Clear and draw: image on right side only
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(panelW, 0, w - panelW, h);
+        ctx.clip();
+        // Draw image into a temp canvas sized to the right panel
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = Math.round(w - panelW);
+        tempCanvas.height = h;
+        const tempCtx = tempCanvas.getContext('2d');
+        drawImageCover(tempCtx, imgSrc, tempCanvas.width, tempCanvas.height);
+        ctx.drawImage(tempCanvas, panelW, 0);
+        ctx.restore();
+
+        // Left panel dark background
+        ctx.fillStyle = '#0d0d0d';
+        ctx.fillRect(0, 0, panelW, h);
+
+        // Gold accent line on panel edge
+        ctx.fillStyle = '#B8944A';
+        ctx.fillRect(panelW - s(3), 0, s(3), h);
+
+        // Logo
+        if (state.logoImg) {
+            const logoS = s(140);
+            const lx = (panelW - logoS) / 2;
+            ctx.drawImage(state.logoImg, lx, s(80), logoS, logoS);
+        }
+
+        // Tag
+        ctx.font = `700 ${s(14)}px 'Outfit', sans-serif`;
+        ctx.fillStyle = '#B8944A';
+        ctx.textAlign = 'center';
+        ctx.letterSpacing = `${s(3)}px`;
+        ctx.fillText(d.type, panelW / 2, s(280));
+        ctx.letterSpacing = '0px';
+
+        // Title
+        ctx.font = `700 ${s(40)}px 'DM Serif Display', serif`;
+        ctx.fillStyle = '#ffffff';
+        ctx.textAlign = 'left';
+        wrapText(ctx, d.title, s(35), s(400), panelW - s(70), s(50));
+
+        // Details
+        const baseY = s(600);
+        const items = [];
+        if (d.size) items.push({ val: d.size, label: 'm²' });
+        if (d.rooms) items.push({ val: d.rooms, label: 'Sobe' });
+        if (d.bath) items.push({ val: d.bath, label: 'Kup.' });
+        if (d.floor) items.push({ val: d.floor, label: 'Sprat' });
+
+        items.forEach((item, i) => {
+            const iy = baseY + i * s(90);
+            ctx.font = `700 ${s(34)}px 'Outfit', sans-serif`;
+            ctx.fillStyle = '#fff';
+            ctx.textAlign = 'left';
+            ctx.fillText(item.val, s(35), iy);
+            ctx.font = `300 ${s(14)}px 'Outfit', sans-serif`;
+            ctx.fillStyle = 'rgba(255,255,255,0.4)';
+            ctx.fillText(item.label, s(35), iy + s(24));
+        });
+
+        // Price at bottom
+        if (state.showPrice && d.price) {
+            ctx.font = `800 ${s(36)}px 'Outfit', sans-serif`;
+            ctx.fillStyle = '#B8944A';
+            ctx.textAlign = 'center';
+            ctx.fillText(d.price, panelW / 2, h - s(120));
+        }
+
+        // Phone
+        if (state.showPhone && d.phone) {
+            ctx.font = `400 ${s(14)}px 'Outfit', sans-serif`;
+            ctx.fillStyle = 'rgba(255,255,255,0.4)';
+            ctx.textAlign = 'center';
+            ctx.fillText(d.phone, panelW / 2, h - s(70));
+        }
+
+        ctx.textAlign = 'left';
+    }
+
+    // ----- TEMPLATE 3: Elegant Frame -----
+    function drawCoverTemplate3(ctx, w, h, d) {
+        const s = (v) => v * (w / 1080);
+
+        // Subtle overall darkening
+        ctx.fillStyle = 'rgba(0,0,0,0.25)';
+        ctx.fillRect(0, 0, w, h);
+
+        // Gold frame border
+        const frameInset = s(30);
+        ctx.strokeStyle = 'rgba(184,148,74,0.5)';
+        ctx.lineWidth = s(2);
+        ctx.strokeRect(frameInset, frameInset, w - frameInset * 2, h - frameInset * 2);
+
+        // Inner frame
+        const innerInset = s(40);
+        ctx.strokeStyle = 'rgba(184,148,74,0.15)';
+        ctx.lineWidth = s(1);
+        ctx.strokeRect(innerInset, innerInset, w - innerInset * 2, h - innerInset * 2);
+
+        // Top section: Logo + Tag
+        if (state.logoImg) {
+            const logoS = s(100);
+            ctx.drawImage(state.logoImg, s(60), s(50), logoS, logoS);
+        }
+
+        // Tag top right
+        ctx.font = `800 ${s(15)}px 'Outfit', sans-serif`;
+        ctx.fillStyle = '#B8944A';
+        ctx.textAlign = 'right';
+        ctx.letterSpacing = `${s(3)}px`;
+        ctx.fillText(d.type, w - s(60), s(95));
+        ctx.letterSpacing = '0px';
+
+        // Bottom dark area for text
+        const bottomH = s(350);
+        const bottomGrad = ctx.createLinearGradient(0, h - bottomH - s(100), 0, h);
+        bottomGrad.addColorStop(0, 'rgba(0,0,0,0)');
+        bottomGrad.addColorStop(0.3, 'rgba(0,0,0,0.5)');
+        bottomGrad.addColorStop(1, 'rgba(0,0,0,0.85)');
+        ctx.fillStyle = bottomGrad;
+        ctx.fillRect(0, h - bottomH - s(100), w, bottomH + s(100));
+
+        // Title
+        ctx.textAlign = 'left';
+        ctx.font = `700 ${s(52)}px 'DM Serif Display', serif`;
+        ctx.fillStyle = '#ffffff';
+        wrapText(ctx, d.title.toUpperCase(), s(60), h - s(280), w - s(120), s(62));
+
+        // Subtitle
+        if (d.subtitle) {
+            ctx.font = `300 ${s(20)}px 'Outfit', sans-serif`;
+            ctx.fillStyle = 'rgba(255,255,255,0.6)';
+            ctx.fillText(d.subtitle, s(60), h - s(200));
+        }
+
+        // Details line
+        let detailStr = '';
+        if (d.size) detailStr += d.size + ' m²';
+        if (d.rooms) detailStr += '  •  ' + d.rooms + ' sobe';
+        if (d.bath) detailStr += '  •  ' + d.bath + ' kup.';
+        if (d.floor) detailStr += '  •  ' + d.floor + ' sprat';
+
+        ctx.font = `400 ${s(18)}px 'Outfit', sans-serif`;
+        ctx.fillStyle = 'rgba(255,255,255,0.5)';
+        ctx.fillText(detailStr, s(60), h - s(150));
+
+        // Gold line
+        ctx.strokeStyle = 'rgba(184,148,74,0.4)';
+        ctx.lineWidth = s(1.5);
+        ctx.beginPath();
+        ctx.moveTo(s(60), h - s(120));
+        ctx.lineTo(w - s(60), h - s(120));
+        ctx.stroke();
+
+        // Price + Phone
+        if (state.showPrice && d.price) {
+            ctx.font = `800 ${s(40)}px 'Outfit', sans-serif`;
+            ctx.fillStyle = '#B8944A';
+            ctx.fillText(d.price, s(60), h - s(70));
+        }
+
+        if (state.showPhone && d.phone) {
+            ctx.font = `400 ${s(16)}px 'Outfit', sans-serif`;
+            ctx.fillStyle = 'rgba(255,255,255,0.4)';
+            ctx.textAlign = 'right';
+            ctx.fillText(d.phone, w - s(60), h - s(75));
+            ctx.textAlign = 'left';
+        }
+    }
+
+    // ----- TEMPLATE 4: Bold Tag -----
+    function drawCoverTemplate4(ctx, w, h, d, sourceImg) {
+        const s = (v) => v * (w / 1080);
+
+        // Gold header bar
+        const barH = s(220);
+        ctx.fillStyle = '#B8944A';
+        ctx.fillRect(0, 0, w, barH);
+
+        // Diagonal cut
+        ctx.beginPath();
+        ctx.moveTo(0, barH);
+        ctx.lineTo(w, barH - s(60));
+        ctx.lineTo(w, barH);
+        ctx.closePath();
+
+        // Image area (below bar but image peeks up behind)
+        // Actually redraw image covering full, then overlay
+        // We need to re-approach: draw image, then gold bar on top
+        ctx.save();
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, w, h);
+        ctx.restore();
+
+        // Image from bar bottom
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(0, barH);
+        ctx.lineTo(w, barH - s(60));
+        ctx.lineTo(w, h);
+        ctx.lineTo(0, h);
+        ctx.closePath();
+        ctx.clip();
+
+        const tempCanvas2 = document.createElement('canvas');
+        tempCanvas2.width = w;
+        tempCanvas2.height = h - barH + s(60);
+        const tempCtx2 = tempCanvas2.getContext('2d');
+        drawImageCover(tempCtx2, sourceImg || state.images[state.coverIndex]?.img, tempCanvas2.width, tempCanvas2.height);
+        ctx.drawImage(tempCanvas2, 0, barH - s(60));
+        ctx.restore();
+
+        // Gold bar
+        ctx.fillStyle = '#B8944A';
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(w, 0);
+        ctx.lineTo(w, barH - s(60));
+        ctx.lineTo(0, barH);
+        ctx.closePath();
+        ctx.fill();
+
+        // Type text on bar
+        ctx.font = `900 ${s(60)}px 'Outfit', sans-serif`;
+        ctx.fillStyle = '#0a0a0a';
+        ctx.textAlign = 'left';
+        ctx.fillText(d.type, s(60), s(120));
+
+        // Title on bar
+        ctx.font = `400 ${s(24)}px 'Outfit', sans-serif`;
+        ctx.fillStyle = 'rgba(0,0,0,0.6)';
+        ctx.fillText(d.title, s(60), s(170));
+
+        // Logo on gold bar (right)
+        if (state.logoImg) {
+            const logoS = s(130);
+            ctx.globalAlpha = 0.2;
+            ctx.drawImage(state.logoImg, w - logoS - s(40), s(30), logoS, logoS);
+            ctx.globalAlpha = 1;
+        }
+
+        // Bottom overlay
+        const botGrad = ctx.createLinearGradient(0, h * 0.6, 0, h);
+        botGrad.addColorStop(0, 'rgba(0,0,0,0)');
+        botGrad.addColorStop(1, 'rgba(0,0,0,0.85)');
+        ctx.fillStyle = botGrad;
+        ctx.fillRect(0, h * 0.5, w, h * 0.5);
+
+        // Details at bottom
+        const detY = h - s(150);
+        let detailStr = '';
+        if (d.size) detailStr += d.size + ' m²';
+        if (d.rooms) detailStr += '  |  ' + d.rooms + ' sobe';
+        if (d.floor) detailStr += '  |  ' + d.floor + ' sprat';
+
+        ctx.font = `500 ${s(22)}px 'Outfit', sans-serif`;
+        ctx.fillStyle = 'rgba(255,255,255,0.7)';
+        ctx.textAlign = 'left';
+        ctx.fillText(detailStr, s(60), detY);
+
+        if (state.showPrice && d.price) {
+            ctx.font = `800 ${s(48)}px 'Outfit', sans-serif`;
+            ctx.fillStyle = '#B8944A';
+            ctx.fillText(d.price, s(60), h - s(70));
+        }
+
+        if (state.showPhone && d.phone) {
+            ctx.font = `400 ${s(16)}px 'Outfit', sans-serif`;
+            ctx.fillStyle = 'rgba(255,255,255,0.4)';
+            ctx.textAlign = 'right';
+            ctx.fillText(d.phone, w - s(60), h - s(75));
+            ctx.textAlign = 'left';
+        }
+
+        // Small logo bottom left
+        drawLogoOnCanvas(ctx, w, h, s(70), 'bottom-left', s(12));
+    }
+
+    // ----- TEMPLATE 5: Light Clean -----
+    function drawCoverTemplate5(ctx, w, h, d, sourceImg) {
+        const s = (v) => v * (w / 1080);
+
+        // White background
+        ctx.fillStyle = '#f5f3ef';
+        ctx.fillRect(0, 0, w, h);
+
+        // Image area (with padding and rounded corners)
+        const imgPad = s(40);
+        const imgH = h * 0.55;
+        const imgRadius = s(16);
+
+        ctx.save();
+        roundRectPath(ctx, imgPad, imgPad, w - imgPad * 2, imgH, imgRadius);
+        ctx.clip();
+        const tempCanvas3 = document.createElement('canvas');
+        tempCanvas3.width = w - imgPad * 2;
+        tempCanvas3.height = imgH;
+        const tempCtx3 = tempCanvas3.getContext('2d');
+        drawImageCover(tempCtx3, sourceImg || state.images[state.coverIndex]?.img, tempCanvas3.width, tempCanvas3.height);
+        ctx.drawImage(tempCanvas3, imgPad, imgPad);
+        ctx.restore();
+
+        // Tag on image (top right)
+        const tagText = d.type;
+        ctx.font = `700 ${s(14)}px 'Outfit', sans-serif`;
+        const tW = ctx.measureText(tagText).width + s(28);
+        const tH = s(34);
+        ctx.fillStyle = '#B8944A';
+        roundRect(ctx, w - imgPad - tW - s(15), imgPad + s(15), tW, tH, s(6));
+        ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(tagText, w - imgPad - tW / 2 - s(15), imgPad + s(15) + tH / 2);
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'alphabetic';
+
+        // Content below image
+        const contentY = imgPad + imgH + s(50);
+
+        // Title
+        ctx.font = `700 ${s(52)}px 'DM Serif Display', serif`;
+        ctx.fillStyle = '#1a1a1a';
+        wrapText(ctx, d.title.toUpperCase(), s(55), contentY, w - s(110), s(62));
+
+        // Subtitle
+        if (d.subtitle) {
+            ctx.font = `300 ${s(20)}px 'Outfit', sans-serif`;
+            ctx.fillStyle = '#888';
+            ctx.fillText(d.subtitle, s(55), contentY + s(50));
+        }
+
+        // Details boxes
+        const boxY = contentY + s(100);
+        const boxW = (w - s(110) - s(30)) / 3;
+        const boxH = s(90);
+        const boxes = [];
+        if (d.size) boxes.push({ val: d.size, label: 'm²' });
+        if (d.rooms) boxes.push({ val: d.rooms, label: 'Sobe' });
+        if (d.bath) boxes.push({ val: d.bath, label: 'Kupatila' });
+
+        boxes.forEach((box, i) => {
+            const bx = s(55) + i * (boxW + s(15));
+            ctx.fillStyle = '#e8e4dd';
+            roundRect(ctx, bx, boxY, boxW, boxH, s(10));
+            ctx.fill();
+
+            ctx.font = `700 ${s(34)}px 'Outfit', sans-serif`;
+            ctx.fillStyle = '#1a1a1a';
+            ctx.textAlign = 'center';
+            ctx.fillText(box.val, bx + boxW / 2, boxY + s(38));
+
+            ctx.font = `400 ${s(14)}px 'Outfit', sans-serif`;
+            ctx.fillStyle = '#999';
+            ctx.fillText(box.label, bx + boxW / 2, boxY + s(65));
+            ctx.textAlign = 'left';
+        });
+
+        // Gold divider
+        ctx.strokeStyle = '#B8944A';
+        ctx.lineWidth = s(2);
+        ctx.beginPath();
+        ctx.moveTo(s(55), boxY + boxH + s(35));
+        ctx.lineTo(w - s(55), boxY + boxH + s(35));
+        ctx.stroke();
+
+        // Price
+        if (state.showPrice && d.price) {
+            ctx.font = `800 ${s(46)}px 'Outfit', sans-serif`;
+            ctx.fillStyle = '#B8944A';
+            ctx.fillText(d.price, s(55), boxY + boxH + s(95));
+        }
+
+        // Phone
+        if (state.showPhone && d.phone) {
+            ctx.font = `400 ${s(16)}px 'Outfit', sans-serif`;
+            ctx.fillStyle = '#999';
+            ctx.textAlign = 'right';
+            ctx.fillText(d.phone, w - s(55), boxY + boxH + s(90));
+            ctx.textAlign = 'left';
+        }
+
+        // Logo bottom center
+        if (state.logoImg) {
+            const logoS = s(90);
+            ctx.globalAlpha = 0.15;
+            ctx.drawImage(state.logoImg, (w - logoS) / 2, h - logoS - s(30), logoS, logoS);
+            ctx.globalAlpha = 1;
+        }
+    }
+
+    // ----- TEMPLATE 6: Magazine Style -----
+    function drawCoverTemplate6(ctx, w, h, d) {
+        const s = (v) => v * (w / 1080);
+
+        // Overall dark tint
+        const overlayGrad = ctx.createLinearGradient(0, 0, 0, h);
+        overlayGrad.addColorStop(0, 'rgba(0,0,0,0.1)');
+        overlayGrad.addColorStop(0.6, 'rgba(0,0,0,0.3)');
+        overlayGrad.addColorStop(0.85, 'rgba(0,0,0,0.6)');
+        overlayGrad.addColorStop(1, 'rgba(0,0,0,0.0)');
+        ctx.fillStyle = overlayGrad;
+        ctx.fillRect(0, 0, w, h);
+
+        // Gold bottom strip
+        const stripH = s(130);
+        ctx.fillStyle = '#B8944A';
+        ctx.fillRect(0, h - stripH, w, stripH);
+
+        // Logo on gold strip
+        if (state.logoImg) {
+            const logoS = s(80);
+            ctx.globalAlpha = 0.25;
+            ctx.drawImage(state.logoImg, w - logoS - s(30), h - stripH + (stripH - logoS) / 2, logoS, logoS);
+            ctx.globalAlpha = 1;
+        }
+
+        // Title on image
+        ctx.font = `800 ${s(64)}px 'DM Serif Display', serif`;
+        ctx.fillStyle = '#ffffff';
+        ctx.textAlign = 'left';
+        wrapText(ctx, d.title.toUpperCase(), s(60), h - stripH - s(200), w - s(120), s(74));
+
+        // Tag below title
+        ctx.font = `600 ${s(16)}px 'Outfit', sans-serif`;
+        ctx.fillStyle = 'rgba(255,255,255,0.6)';
+        ctx.letterSpacing = `${s(4)}px`;
+        ctx.fillText(d.type, s(60), h - stripH - s(110));
+        ctx.letterSpacing = '0px';
+
+        // Details line
+        let detStr = '';
+        if (d.size) detStr += d.size + ' m²';
+        if (d.rooms) detStr += '  ·  ' + d.rooms + ' sobe';
+        if (d.floor) detStr += '  ·  ' + d.floor + ' sprat';
+
+        ctx.font = `400 ${s(18)}px 'Outfit', sans-serif`;
+        ctx.fillStyle = 'rgba(255,255,255,0.5)';
+        ctx.fillText(detStr, s(60), h - stripH - s(70));
+
+        // Price on gold strip
+        if (state.showPrice && d.price) {
+            ctx.font = `900 ${s(48)}px 'Outfit', sans-serif`;
+            ctx.fillStyle = '#0a0a0a';
+            ctx.fillText(d.price, s(50), h - s(45));
+        }
+
+        // Phone on gold strip
+        if (state.showPhone && d.phone) {
+            ctx.font = `400 ${s(16)}px 'Outfit', sans-serif`;
+            ctx.fillStyle = 'rgba(0,0,0,0.5)';
+            ctx.fillText(d.phone, s(50), h - s(90));
+        }
+
+        // Vertical text accent
+        ctx.save();
+        ctx.translate(w - s(30), h * 0.4);
+        ctx.rotate(-Math.PI / 2);
+        ctx.font = `300 ${s(12)}px 'Outfit', sans-serif`;
+        ctx.fillStyle = 'rgba(255,255,255,0.15)';
+        ctx.letterSpacing = `${s(4)}px`;
+        ctx.textAlign = 'center';
+        ctx.fillText('APEX REAL ESTATE', 0, 0);
+        ctx.restore();
+        ctx.textAlign = 'left';
+        ctx.letterSpacing = '0px';
+    }
+
+    // ============================================
+    // DRAW GALLERY SLIDE (with logo watermark)
+    // ============================================
+    function drawGallerySlide(ctx, canvas, sourceImg) {
+        const w = canvas.width;
+        const h = canvas.height;
+
+        drawImageCover(ctx, sourceImg, w, h);
+
+        // Draw logo watermark
+        const logoS = state.logoSize * (w / 1080);
+        drawLogoOnCanvas(ctx, w, h, logoS, state.logoPos, logoS * 0.2);
+    }
+
+    function drawLogoOnCanvas(ctx, w, h, size, position, margin) {
+        if (!state.logoImg) return;
+
+        let x, y;
+        switch (position) {
+            case 'top-left':
+                x = margin;
+                y = margin;
+                break;
+            case 'top-right':
+                x = w - size - margin;
+                y = margin;
+                break;
+            case 'bottom-left':
+                x = margin;
+                y = h - size - margin;
+                break;
+            case 'bottom-right':
+                x = w - size - margin;
+                y = h - size - margin;
+                break;
+        }
+
+        // Subtle shadow behind logo
+        ctx.save();
+        ctx.shadowColor = 'rgba(0,0,0,0.4)';
+        ctx.shadowBlur = size * 0.3;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = size * 0.05;
+        ctx.drawImage(state.logoImg, x, y, size, size);
+        ctx.restore();
+    }
+
+    // ============================================
+    // HELPER: Rounded Rectangle
+    // ============================================
+    function roundRect(ctx, x, y, w, h, r) {
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + w - r, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+        ctx.lineTo(x + w, y + h - r);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        ctx.lineTo(x + r, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.closePath();
+    }
+
+    function roundRectPath(ctx, x, y, w, h, r) {
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + w - r, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+        ctx.lineTo(x + w, y + h - r);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        ctx.lineTo(x + r, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.closePath();
+    }
+
+    // ============================================
+    // HELPER: Wrap text
+    // ============================================
+    function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+        const words = text.split(' ');
+        let line = '';
+        let lineY = y;
+
+        for (let i = 0; i < words.length; i++) {
+            const testLine = line + words[i] + ' ';
+            const metrics = ctx.measureText(testLine);
+            if (metrics.width > maxWidth && i > 0) {
+                ctx.fillText(line.trim(), x, lineY);
+                line = words[i] + ' ';
+                lineY += lineHeight;
+            } else {
+                line = testLine;
+            }
+        }
+        ctx.fillText(line.trim(), x, lineY);
+    }
+
+    // drawCover now properly stores image refs and passes sourceImg to templates
+    // No override needed - handled directly in drawCover function above
+
+    // ============================================
+    // DOWNLOAD
+    // ============================================
+    function downloadSingle() {
+        if (state.images.length === 0) { showToast('Nema slika za preuzimanje'); return; }
+
+        const fullCanvas = document.createElement('canvas');
+        fullCanvas.width = 1080;
+        fullCanvas.height = 1350;
+        const fullCtx = fullCanvas.getContext('2d');
+
+        const reordered = getReorderedImages();
+        const imgData = reordered[state.currentSlide];
+
+        if (state.currentSlide === 0) {
+            drawCover(fullCtx, fullCanvas, imgData.img);
+        } else {
+            drawGallerySlide(fullCtx, fullCanvas, imgData.img);
+        }
+
+        fullCanvas.toBlob((blob) => {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            const title = document.getElementById('propTitle').value.replace(/[^a-zA-Z0-9]/g, '_') || 'slide';
+            a.href = url;
+            a.download = `apex_${title}_slide${state.currentSlide + 1}.png`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('Slika preuzeta! ✓');
+        }, 'image/png');
+    }
+
+    async function downloadAll() {
+        if (state.images.length === 0) return;
+
+        const overlay = document.getElementById('progressOverlay');
+        overlay.classList.add('visible');
+
+        const zip = new JSZip();
+        const reordered = getReorderedImages();
+        const title = document.getElementById('propTitle').value.replace(/[^a-zA-Z0-9]/g, '_') || 'nekretnina';
+        const folder = zip.folder(`apex_${title}`);
+
+        for (let i = 0; i < reordered.length; i++) {
+            document.getElementById('progressText').textContent = `Generisanje ${i + 1}/${reordered.length}...`;
+
+            const fullCanvas = document.createElement('canvas');
+            fullCanvas.width = 1080;
+            fullCanvas.height = 1350;
+            const fullCtx = fullCanvas.getContext('2d');
+
+            if (i === 0) {
+                drawCover(fullCtx, fullCanvas, reordered[i].img);
+            } else {
+                drawGallerySlide(fullCtx, fullCanvas, reordered[i].img);
+            }
+
+            const blob = await new Promise(resolve => fullCanvas.toBlob(resolve, 'image/png'));
+            const name = i === 0 ? `01_cover.png` : `${String(i + 1).padStart(2, '0')}_slide.png`;
+            folder.file(name, blob);
+        }
+
+        document.getElementById('progressText').textContent = 'Pakovanje ZIP-a...';
+
+        const content = await zip.generateAsync({ type: 'blob' });
+        const url = URL.createObjectURL(content);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `apex_${title}_instagram.zip`;
+        a.click();
+        URL.revokeObjectURL(url);
+
+        overlay.classList.remove('visible');
+        showToast(`${reordered.length} slika preuzeto kao ZIP! ✓`);
+    }
+
+    // ============================================
+    // TOAST
+    // ============================================
+    function showToast(msg) {
+        const toast = document.getElementById('toast');
+        toast.textContent = msg;
+        toast.classList.add('visible');
+        setTimeout(() => toast.classList.remove('visible'), 3000);
+    }
+</script>
+
+</body>
+</html>

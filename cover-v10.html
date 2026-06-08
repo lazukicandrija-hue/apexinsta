@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1080">
+<title>APEX Real Estate – Cover V10 – Luxury Gradient Waves</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Outfit:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    width: 1080px;
+    height: 1080px;
+    overflow: hidden;
+    background: #0a0a0a;
+    font-family: 'Outfit', sans-serif;
+    color: #ffffff;
+    position: relative;
+  }
+
+  /* ── Deep dark base gradient ── */
+  .bg-base {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 80%, rgba(184,148,74,0.04) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 20%, rgba(184,148,74,0.03) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, #0d0d0d 0%, #0a0a0a 100%);
+    z-index: 0;
+  }
+
+  /* ── SVG Wave Layer ── */
+  .waves-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  .waves-layer svg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* ── Particle canvas ── */
+  .particles {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .particle {
+    position: absolute;
+    border-radius: 50%;
+    background: #d4af5a;
+  }
+
+  /* ── Noise texture ── */
+  .noise {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    opacity: 0.02;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 200px 200px;
+  }
+
+  /* ── Vignette ── */
+  .vignette {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 25%, rgba(0,0,0,0.6) 100%);
+    z-index: 4;
+    pointer-events: none;
+  }
+
+  /* ── Content Layer ── */
+  .content {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  /* ── Logo ── */
+  .logo-wrap {
+    margin-top: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .logo-wrap img {
+    height: 350px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 0 60px rgba(184,148,74,0.12)) drop-shadow(0 0 20px rgba(184,148,74,0.08));
+  }
+
+  /* ── Frosted Glass Info Strip ── */
+  .info-strip {
+    margin-top: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    padding: 22px 50px;
+    background: rgba(255,255,255,0.03);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(184,148,74,0.12);
+    border-radius: 6px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* subtle glass highlight on top edge */
+  .info-strip::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(184,148,74,0.3), transparent);
+  }
+
+  /* shimmer sweep across the strip */
+  .info-strip::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(184,148,74,0.04), transparent);
+    animation: strip-shimmer 6s ease-in-out infinite;
+  }
+
+  @keyframes strip-shimmer {
+    0%, 100% { left: -100%; }
+    50% { left: 100%; }
+  }
+
+  .info-item {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .info-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 20px;
+    background: rgba(184,148,74,0.25);
+  }
+
+  .info-label {
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: 1.5px;
+    color: rgba(255,255,255,0.7);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .info-label.gold {
+    color: #d4af5a;
+    font-weight: 500;
+  }
+
+  .info-label.location {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    color: #ffffff;
+  }
+
+  /* ── Price Section ── */
+  .price-section {
+    margin-top: auto;
+    margin-bottom: 140px;
+    text-align: center;
+    position: relative;
+  }
+
+  .price-label {
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: rgba(184,148,74,0.5);
+    margin-bottom: 14px;
+  }
+
+  .price-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 82px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    line-height: 1;
+    background: linear-gradient(
+      90deg,
+      #B8944A 0%,
+      #e8d5a0 25%,
+      #f5ecd0 40%,
+      #d4af5a 55%,
+      #B8944A 70%,
+      #e8d5a0 85%,
+      #B8944A 100%
+    );
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: price-shimmer 5s ease-in-out infinite;
+  }
+
+  @keyframes price-shimmer {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* ── Thin decorative lines flanking the price ── */
+  .price-lines {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 18px;
+  }
+
+  .price-line {
+    width: 80px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(184,148,74,0.35), transparent);
+  }
+
+  .price-diamond {
+    width: 5px;
+    height: 5px;
+    background: #d4af5a;
+    transform: rotate(45deg);
+    opacity: 0.6;
+  }
+
+  /* ── Swipe hint ── */
+  .swipe-hint {
+    position: absolute;
+    bottom: 44px;
+    right: 60px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 15;
+    opacity: 0.4;
+    animation: nudge 2.5s ease-in-out infinite;
+  }
+
+  .swipe-hint span {
+    font-family: 'Outfit', sans-serif;
+    font-size: 12px;
+    font-weight: 300;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #d4af5a;
+  }
+
+  .swipe-hint svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: #d4af5a;
+    stroke-width: 1.5;
+  }
+
+  @keyframes nudge {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(8px); }
+  }
+
+  /* ── Bottom edge gradient ── */
+  .bottom-fade {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100px;
+    background: linear-gradient(to top, rgba(10,10,10,0.9), transparent);
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  /* ── Top ambient glow behind logo ── */
+  .glow-logo {
+    position: absolute;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 500px;
+    height: 400px;
+    background: radial-gradient(ellipse, rgba(184,148,74,0.06) 0%, transparent 65%);
+    z-index: 5;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+  <!-- Background base -->
+  <div class="bg-base"></div>
+
+  <!-- SVG Flowing Wave Shapes -->
+  <div class="waves-layer">
+    <!-- Wave 1: Large sweep from bottom-left to upper-right -->
+    <svg viewBox="0 0 1080 1080" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="waveGrad1" x1="0%" y1="100%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="rgba(184,148,74,0.01)" />
+          <stop offset="40%" stop-color="rgba(184,148,74,0.08)" />
+          <stop offset="70%" stop-color="rgba(184,148,74,0.12)" />
+          <stop offset="100%" stop-color="rgba(184,148,74,0.02)" />
+        </linearGradient>
+        <linearGradient id="waveGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="rgba(184,148,74,0.02)" />
+          <stop offset="30%" stop-color="rgba(184,148,74,0.06)" />
+          <stop offset="60%" stop-color="rgba(184,148,74,0.10)" />
+          <stop offset="100%" stop-color="rgba(184,148,74,0.01)" />
+        </linearGradient>
+        <linearGradient id="waveGrad3" x1="100%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="rgba(184,148,74,0.0)" />
+          <stop offset="35%" stop-color="rgba(184,148,74,0.05)" />
+          <stop offset="65%" stop-color="rgba(184,148,74,0.15)" />
+          <stop offset="100%" stop-color="rgba(184,148,74,0.03)" />
+        </linearGradient>
+        <!-- Blur filter for soft edges -->
+        <filter id="waveBlur1">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="8" />
+        </filter>
+        <filter id="waveBlur2">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="12" />
+        </filter>
+      </defs>
+
+      <!-- Wave 1: sweeping ribbon from bottom-left to top-right -->
+      <path d="
+        M -100 900
+        C 150 850, 300 650, 480 580
+        C 660 510, 750 400, 900 320
+        C 1050 240, 1100 180, 1200 120
+        L 1200 220
+        C 1100 280, 1020 340, 880 420
+        C 740 500, 620 610, 450 680
+        C 280 750, 120 950, -100 1000
+        Z
+      " fill="url(#waveGrad1)" filter="url(#waveBlur1)" />
+
+      <!-- Wave 2: mid crossing ribbon -->
+      <path d="
+        M -50 500
+        C 100 420, 280 380, 420 400
+        C 560 420, 680 500, 800 520
+        C 920 540, 1000 480, 1150 420
+        L 1150 510
+        C 1020 560, 940 620, 810 600
+        C 680 580, 540 510, 400 490
+        C 260 470, 80 520, -50 590
+        Z
+      " fill="url(#waveGrad2)" filter="url(#waveBlur2)" />
+
+      <!-- Wave 3: subtle top ribbon accent -->
+      <path d="
+        M 1200 50
+        C 1000 100, 850 200, 680 260
+        C 510 320, 380 280, 200 310
+        C 20 340, -80 380, -150 420
+        L -150 350
+        C -80 310, 30 270, 210 240
+        C 390 210, 520 250, 690 190
+        C 860 130, 1020 30, 1200 -20
+        Z
+      " fill="url(#waveGrad3)" filter="url(#waveBlur1)" />
+    </svg>
+
+    <!-- Extra soft ambient wave near bottom -->
+    <svg viewBox="0 0 1080 1080" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" style="opacity: 0.7;">
+      <defs>
+        <linearGradient id="waveGrad4" x1="0%" y1="100%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="rgba(184,148,74,0.0)" />
+          <stop offset="50%" stop-color="rgba(184,148,74,0.07)" />
+          <stop offset="100%" stop-color="rgba(184,148,74,0.0)" />
+        </linearGradient>
+        <filter id="waveBlur3">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="20" />
+        </filter>
+      </defs>
+      <path d="
+        M -100 780
+        C 100 720, 300 690, 500 710
+        C 700 730, 850 780, 1000 740
+        C 1150 700, 1200 660, 1250 640
+        L 1250 760
+        C 1200 780, 1100 810, 980 840
+        C 860 870, 680 830, 480 810
+        C 280 790, 80 830, -100 880
+        Z
+      " fill="url(#waveGrad4)" filter="url(#waveBlur3)" />
+    </svg>
+  </div>
+
+  <!-- Particle dots -->
+  <div class="particles" id="particles"></div>
+
+  <!-- Noise -->
+  <div class="noise"></div>
+
+  <!-- Vignette -->
+  <div class="vignette"></div>
+
+  <!-- Ambient glow behind logo -->
+  <div class="glow-logo"></div>
+
+  <!-- Bottom edge fade -->
+  <div class="bottom-fade"></div>
+
+  <!-- ═══ Main Content ═══ -->
+  <div class="content">
+
+    <!-- Logo -->
+    <div class="logo-wrap">
+      <img src="logo-transparent.png" alt="APEX Real Estate">
+    </div>
+
+    <!-- Frosted Glass Info Strip -->
+    <div class="info-strip">
+      <div class="info-item">
+        <span class="info-label gold" id="tipLabel">Na prodaju</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label location" id="lokacija">Centar, Novi Sad</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label"><span id="kvadratura">126</span> m²</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label"><span id="sprat">3.</span> sprat</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label"><span id="sobe">4</span> sobe</span>
+      </div>
+    </div>
+
+    <!-- Price -->
+    <div class="price-section">
+      <div class="price-label">Cena</div>
+      <div class="price-value" id="cena">185.000 €</div>
+      <div class="price-lines">
+        <div class="price-line"></div>
+        <div class="price-diamond"></div>
+        <div class="price-line"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Swipe hint -->
+  <div class="swipe-hint">
+    <span>Prevuci</span>
+    <svg viewBox="0 0 24 24">
+      <polyline points="9 18 15 12 9 6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+
+<script>
+// ═══════════════════════════════════════════
+//  APEX REAL ESTATE – PODACI O NEKRETNINI
+//  Izmeni podatke ispod za novu objavu:
+// ═══════════════════════════════════════════
+
+const nekretnina = {
+    lokacija:    "Centar, Novi Sad",
+    kvadratura:  "126",
+    sprat:       "3.",
+    sobe:        "4",
+    cena:        "185.000 €",
+    tip:         "Na prodaju"
+};
+
+// ═══════════════════════════════════════════
+//  Automatsko popunjavanje – ne menjaj ispod
+// ═══════════════════════════════════════════
+document.getElementById('lokacija').textContent    = nekretnina.lokacija;
+document.getElementById('kvadratura').textContent  = nekretnina.kvadratura;
+document.getElementById('sprat').textContent       = nekretnina.sprat;
+document.getElementById('sobe').textContent        = nekretnina.sobe;
+document.getElementById('cena').textContent        = nekretnina.cena;
+document.getElementById('tipLabel').textContent    = nekretnina.tip;
+
+// ═══════════════════════════════════════════
+//  Generate scattered particle dots
+// ═══════════════════════════════════════════
+(function() {
+  const container = document.getElementById('particles');
+  const count = 45;
+  for (let i = 0; i < count; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'particle';
+    const size = 1.5 + Math.random() * 2;
+    dot.style.width = size + 'px';
+    dot.style.height = size + 'px';
+    dot.style.left = Math.random() * 1080 + 'px';
+    dot.style.top = Math.random() * 1080 + 'px';
+    dot.style.opacity = 0.04 + Math.random() * 0.1;
+    container.appendChild(dot);
+  }
+})();
+</script>
+</body>
+</html>

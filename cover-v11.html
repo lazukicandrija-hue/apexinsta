@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1080">
+<title>APEX Real Estate – Cover V11</title>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=Inter:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    width: 1080px;
+    height: 1080px;
+    overflow: hidden;
+    background: #0a0a0a;
+    font-family: 'Inter', sans-serif;
+    color: #ffffff;
+    position: relative;
+  }
+
+  /* ── Subtle grid background ── */
+  .grid-bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(to right,  rgba(184,148,74,0.025) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(184,148,74,0.025) 1px, transparent 1px);
+    background-size: 108px 108px;
+    z-index: 0;
+  }
+
+  /* Noise texture */
+  .noise {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    opacity: 0.03;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 200px 200px;
+  }
+
+  /* Radial vignette */
+  .vignette {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 25%, rgba(0,0,0,0.6) 100%);
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  /* ── CENTER VERTICAL LINE ── */
+  .center-line {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      rgba(184,148,74,0.08) 8%,
+      rgba(184,148,74,0.35) 15%,
+      rgba(184,148,74,0.35) 85%,
+      rgba(184,148,74,0.08) 92%,
+      transparent 100%
+    );
+    z-index: 4;
+    transform: translateX(-0.5px);
+  }
+
+  /* ── Decorative elements on center line ── */
+  /* Diamond at center */
+  .center-diamond {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 14px;
+    height: 14px;
+    border: 1.5px solid #B8944A;
+    transform: translate(-50%, -50%) rotate(45deg);
+    z-index: 6;
+    background: #0a0a0a;
+  }
+  .center-diamond::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 4px;
+    height: 4px;
+    background: #d4af5a;
+    transform: translate(-50%, -50%);
+  }
+
+  /* Dots along center line */
+  .line-dot {
+    position: absolute;
+    left: 50%;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: rgba(184,148,74,0.5);
+    transform: translateX(-50%);
+    z-index: 6;
+  }
+  .line-dot.d1 { top: 200px; }
+  .line-dot.d2 { top: 320px; }
+  .line-dot.d3 { top: 440px; }
+  .line-dot.d4 { top: 640px; }
+  .line-dot.d5 { top: 760px; }
+  .line-dot.d6 { top: 880px; }
+
+  /* ── CORNER L-BRACKETS ── */
+  .corner {
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    z-index: 5;
+  }
+  .corner::before,
+  .corner::after {
+    content: '';
+    position: absolute;
+    background: rgba(184,148,74,0.45);
+  }
+
+  .corner-tl { top: 32px; left: 32px; }
+  .corner-tl::before { top: 0; left: 0; width: 1.5px; height: 48px; }
+  .corner-tl::after  { top: 0; left: 0; width: 48px; height: 1.5px; }
+
+  .corner-tr { top: 32px; right: 32px; }
+  .corner-tr::before { top: 0; right: 0; width: 1.5px; height: 48px; }
+  .corner-tr::after  { top: 0; right: 0; width: 48px; height: 1.5px; }
+
+  .corner-bl { bottom: 32px; left: 32px; }
+  .corner-bl::before { bottom: 0; left: 0; width: 1.5px; height: 48px; }
+  .corner-bl::after  { bottom: 0; left: 0; width: 48px; height: 1.5px; }
+
+  .corner-br { bottom: 32px; right: 32px; }
+  .corner-br::before { bottom: 0; right: 0; width: 1.5px; height: 48px; }
+  .corner-br::after  { bottom: 0; right: 0; width: 48px; height: 1.5px; }
+
+  /* ── LOGO TOP CENTER ── */
+  .logo-area {
+    position: absolute;
+    top: 48px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .logo-area img {
+    height: 240px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 30px rgba(184,148,74,0.12));
+  }
+
+  /* ── LEFT SIDE ── */
+  .left-panel {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    padding-right: 60px;
+  }
+
+  /* Na prodaju label */
+  .sale-badge {
+    margin-top: 340px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 26px;
+    border: 1px solid rgba(184,148,74,0.4);
+    background: rgba(184,148,74,0.06);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: 500;
+    color: #d4af5a;
+  }
+  .sale-badge-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #d4af5a;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* Rotated location text */
+  .location-vertical {
+    position: absolute;
+    left: 80px;
+    top: 50%;
+    transform: translateY(-50%) rotate(-90deg);
+    transform-origin: center center;
+    white-space: nowrap;
+    font-family: 'Bodoni Moda', serif;
+    font-size: 52px;
+    font-weight: 400;
+    font-style: italic;
+    letter-spacing: 6px;
+    color: #ffffff;
+    text-transform: uppercase;
+    z-index: 5;
+    opacity: 0.95;
+  }
+
+  /* Thin decorative accent near location */
+  .location-accent {
+    position: absolute;
+    left: 55px;
+    top: 50%;
+    transform: translateY(-50%) rotate(-90deg);
+    width: 120px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(184,148,74,0.4), transparent);
+    z-index: 5;
+  }
+
+  /* ── RIGHT SIDE ── */
+  .right-panel {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-left: 60px;
+    padding-top: 340px;
+  }
+
+  /* Stat items */
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 8px;
+  }
+
+  .stat-number {
+    font-family: 'Bodoni Moda', serif;
+    font-size: 68px;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1;
+    letter-spacing: 2px;
+  }
+  .stat-number .unit {
+    font-size: 30px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.4);
+    margin-left: 4px;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: rgba(184,148,74,0.6);
+    margin-top: 4px;
+  }
+
+  /* Gold accent dot between stats */
+  .stat-divider {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 16px 0;
+  }
+  .stat-divider-dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: rgba(184,148,74,0.5);
+  }
+  .stat-divider-line {
+    width: 30px;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(184,148,74,0.4), transparent);
+  }
+
+  /* ── PRICE BOTTOM CENTER ── */
+  .price-area {
+    position: absolute;
+    bottom: 110px;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .price-label {
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: rgba(184,148,74,0.5);
+    margin-bottom: 10px;
+  }
+
+  .price-value {
+    font-family: 'Bodoni Moda', serif;
+    font-size: 72px;
+    font-weight: 700;
+    color: #d4af5a;
+    letter-spacing: 4px;
+    line-height: 1;
+    text-shadow: 0 0 60px rgba(184,148,74,0.15);
+  }
+
+  /* Decorative lines flanking price */
+  .price-lines {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-top: 16px;
+  }
+  .price-line {
+    width: 80px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(184,148,74,0.3), transparent);
+  }
+  .price-diamond {
+    width: 6px;
+    height: 6px;
+    border: 1px solid rgba(184,148,74,0.4);
+    transform: rotate(45deg);
+    background: transparent;
+  }
+
+  /* ── SWIPE HINT ── */
+  .swipe-hint {
+    position: absolute;
+    bottom: 42px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 10;
+    opacity: 0.4;
+    animation: nudge 2.5s ease-in-out infinite;
+  }
+  .swipe-hint span {
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #d4af5a;
+  }
+  .swipe-hint svg {
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: #d4af5a;
+    stroke-width: 1.5;
+  }
+  @keyframes nudge {
+    0%, 100% { transform: translateX(-50%); }
+    50% { transform: translateX(calc(-50% + 6px)); }
+  }
+
+  /* ── Ambient glows ── */
+  .glow-top {
+    position: absolute;
+    top: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 400px;
+    height: 250px;
+    background: radial-gradient(ellipse, rgba(184,148,74,0.04) 0%, transparent 70%);
+    z-index: 0;
+    pointer-events: none;
+  }
+  .glow-bottom {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 500px;
+    height: 200px;
+    background: radial-gradient(ellipse, rgba(184,148,74,0.05) 0%, transparent 70%);
+    z-index: 0;
+    pointer-events: none;
+  }
+  .glow-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(184,148,74,0.03) 0%, transparent 70%);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* ── Thin horizontal accent lines at top and bottom ── */
+  .h-line-top {
+    position: absolute;
+    top: 300px;
+    left: 15%;
+    right: 15%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(184,148,74,0.1) 30%, rgba(184,148,74,0.1) 70%, transparent);
+    z-index: 3;
+  }
+  .h-line-bottom {
+    position: absolute;
+    bottom: 95px;
+    left: 20%;
+    right: 20%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(184,148,74,0.12) 30%, rgba(184,148,74,0.12) 70%, transparent);
+    z-index: 3;
+  }
+
+</style>
+</head>
+<body>
+
+  <!-- Background layers -->
+  <div class="grid-bg"></div>
+  <div class="noise"></div>
+  <div class="vignette"></div>
+  <div class="glow-top"></div>
+  <div class="glow-bottom"></div>
+  <div class="glow-center"></div>
+
+  <!-- Corner L-brackets -->
+  <div class="corner corner-tl"></div>
+  <div class="corner corner-tr"></div>
+  <div class="corner corner-bl"></div>
+  <div class="corner corner-br"></div>
+
+  <!-- Center vertical line -->
+  <div class="center-line"></div>
+
+  <!-- Decorative elements on center line -->
+  <div class="center-diamond"></div>
+  <div class="line-dot d1"></div>
+  <div class="line-dot d2"></div>
+  <div class="line-dot d3"></div>
+  <div class="line-dot d4"></div>
+  <div class="line-dot d5"></div>
+  <div class="line-dot d6"></div>
+
+  <!-- Horizontal accent lines -->
+  <div class="h-line-top"></div>
+  <div class="h-line-bottom"></div>
+
+  <!-- LOGO top center -->
+  <div class="logo-area">
+    <img src="logo-transparent.png" alt="APEX Real Estate">
+  </div>
+
+  <!-- LEFT SIDE -->
+  <div class="left-panel">
+    <!-- Na prodaju badge -->
+    <div class="sale-badge">
+      <span class="sale-badge-dot"></span>
+      <span id="tipLabel">Na prodaju</span>
+    </div>
+  </div>
+
+  <!-- Location rotated vertically on far left -->
+  <div class="location-vertical" id="lokacija">Centar, Novi Sad</div>
+  <div class="location-accent"></div>
+
+  <!-- RIGHT SIDE -->
+  <div class="right-panel">
+
+    <!-- Kvadratura -->
+    <div class="stat-item">
+      <div class="stat-number"><span id="kvadratura">126</span><span class="unit">m²</span></div>
+      <div class="stat-label">Kvadratura</div>
+    </div>
+
+    <div class="stat-divider">
+      <div class="stat-divider-dot"></div>
+      <div class="stat-divider-dot"></div>
+      <div class="stat-divider-line"></div>
+    </div>
+
+    <!-- Sprat -->
+    <div class="stat-item">
+      <div class="stat-number"><span id="sprat">3.</span><span class="unit">sprat</span></div>
+      <div class="stat-label">Spratnost</div>
+    </div>
+
+    <div class="stat-divider">
+      <div class="stat-divider-dot"></div>
+      <div class="stat-divider-dot"></div>
+      <div class="stat-divider-line"></div>
+    </div>
+
+    <!-- Sobe -->
+    <div class="stat-item">
+      <div class="stat-number"><span id="sobe">4</span><span class="unit">sobe</span></div>
+      <div class="stat-label">Broj soba</div>
+    </div>
+
+  </div>
+
+  <!-- PRICE bottom center -->
+  <div class="price-area">
+    <div class="price-label">Cena</div>
+    <div class="price-value" id="cena">185.000 €</div>
+    <div class="price-lines">
+      <div class="price-line"></div>
+      <div class="price-diamond"></div>
+      <div class="price-line"></div>
+    </div>
+  </div>
+
+  <!-- Swipe hint -->
+  <div class="swipe-hint">
+    <span>Prevuci</span>
+    <svg viewBox="0 0 24 24">
+      <polyline points="9 18 15 12 9 6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+
+<script>
+// ═══════════════════════════════════════════
+//  APEX REAL ESTATE – PODACI O NEKRETNINI
+//  Izmeni podatke ispod za novu objavu:
+// ═══════════════════════════════════════════
+
+const nekretnina = {
+    lokacija:    "Centar, Novi Sad",
+    kvadratura:  "126",
+    sprat:       "3.",
+    sobe:        "4",
+    cena:        "185.000 €",
+    tip:         "Na prodaju"
+};
+
+// ═══════════════════════════════════════════
+//  Automatsko popunjavanje – ne menjaj ispod
+// ═══════════════════════════════════════════
+document.getElementById('lokacija').textContent    = nekretnina.lokacija;
+document.getElementById('kvadratura').textContent  = nekretnina.kvadratura;
+document.getElementById('sprat').textContent       = nekretnina.sprat;
+document.getElementById('sobe').textContent        = nekretnina.sobe;
+document.getElementById('cena').textContent        = nekretnina.cena;
+document.getElementById('tipLabel').textContent    = nekretnina.tip;
+</script>
+</body>
+</html>

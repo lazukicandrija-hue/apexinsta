@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apex Vizitka - 3D Holo Shimmer Efekat (Popravljeno)</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            background-color: #111;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Montserrat', sans-serif;
+            color: #fff;
+            overflow-x: hidden;
+            perspective: 2500px;
+        }
+
+        h1 {
+            color: #d4af37;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        p {
+            color: #aaa;
+            margin-bottom: 50px;
+            text-align: center;
+            max-width: 600px;
+        }
+
+        .cards-container {
+            display: flex;
+            gap: 80px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        /* OVO POPRAVLJA BAG: Omotac mora biti statican prikacen za misonju, a unutrasnja karta se vrti */
+        .card-wrapper {
+            position: relative;
+            width: 330px;
+            height: 510px;
+            perspective: 1500px;
+            cursor: default;
+        }
+
+        /* Sama kartica */
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            /* Umeksana tranzicija da leti kao po puteru */
+            transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8), inset 0 1px 2px rgba(255,255,255,0.1);
+            border-radius: 6px;
+            background-color: #151515;
+            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 10 L30 30 L10 30 Z' fill='none' stroke='%231f1f1f' stroke-width='2'/%3E%3C/svg%3E");
+            border: 1px solid #2a2a2a;
+        }
+
+        .shimmer {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 6px;
+            background: radial-gradient(circle at 50% 50%, rgba(212,175,55,0.3) 0%, rgba(255,255,255,0.1) 40%, transparent 60%);
+            mix-blend-mode: overlay; /* Optimizovaniji blend mode */
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .glare {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 6px;
+            background: linear-gradient(105deg, transparent 20%, rgba(255,255,255,0.1) 35%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+            z-index: 11;
+        }
+
+        .card-wrapper:hover .card .shimmer, .card-wrapper:hover .card .glare {
+            opacity: 1;
+        }
+
+        .card-wrapper:hover .card {
+            box-shadow: 0 45px 80px rgba(0,0,0,0.9), inset 0 1px 3px rgba(212,175,55,0.3);
+        }
+
+        .bg-element {
+            position: absolute;
+            top: 0; left: 0; width: 150%; height: 150%;
+            background: linear-gradient(135deg, transparent 40%, #524213 42%, #d4af37 45%, transparent 48%);
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: 1;
+            /* 3d efekat pozadine */
+            transform: translateZ(-20px);
+        }
+
+        .card-inner {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            /* Izbacujemo logotip ka ekranu */
+            transform: translateZ(50px);
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .logo-img {
+            width: 220px;
+            object-fit: contain;
+            filter: drop-shadow(0 20px 20px rgba(0,0,0,0.8));
+        }
+
+        .back-inner {
+            padding: 40px;
+            justify-content: flex-start;
+            text-align: center;
+            box-sizing: border-box;
+            transform: translateZ(30px);
+        }
+
+        .back-logo { width: 120px; margin-bottom: 50px; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.5)); }
+
+        .info {
+            width: 100%;
+            background: rgba(10,10,10,0.85);
+            padding: 25px 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(212,175,55,0.15);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            pointer-events: none;
+        }
+
+        .name { font-size: 20px; color: #d4af37; letter-spacing: 2.5px; font-weight: 700; margin-bottom: 5px; text-transform: uppercase; }
+        .job { font-size: 10px; color: #a1a1a1; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 30px; }
+        
+        .contact-item { display: flex; align-items: center; justify-content: center; gap: 12px; color:#fff; font-size: 14px; margin: 12px 0; font-weight: 500;}
+        .contact-item svg { width: 15px; fill: #d4af37; }
+
+    </style>
+</head>
+<body>
+
+    <h1>Interaktivni Vizitka Preview</h1>
+    <p>Pređite MIŠEM preko vizitki (Bag je sada rešen!). Pravo folijsko presijavanje (Holofoil) reaguje besprekorno na Vas kursor sa čistim i glatkim 3D efektom.</p>
+
+    <div class="cards-container">
+        
+        <!-- PREDNJA STRANA -->
+        <div class="card-wrapper" id="wrap-front">
+            <div class="card" id="card-front">
+                <div class="bg-element"></div>
+                <div class="shimmer" id="shimmer-front"></div>
+                <div class="glare" id="glare-front"></div>
+                <div class="card-inner">
+                    <img class="logo-img" src="../najnovi sajt/logo/apex-logo-transparent.png" alt="Logo">
+                </div>
+            </div>
+        </div>
+
+        <!-- ZADNJA STRANA -->
+        <div class="card-wrapper" id="wrap-back">
+            <div class="card" id="card-back">
+                <div class="bg-element"></div>
+                <div class="shimmer" id="shimmer-back"></div>
+                <div class="glare" id="glare-back"></div>
+                <div class="card-inner back-inner">
+                    <img class="logo-img back-logo" src="../najnovi sajt/logo/apex-logo-transparent.png" alt="Logo">
+                    <div class="info">
+                        <div class="name">Isak Mijatović</div>
+                        <div class="job">Real Estate Advisor</div>
+                        <div class="contact-item">
+                            <svg viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.03 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg> 
+                            064 333 5757
+                        </div>
+                        <div class="contact-item">
+                            <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg> 
+                            office@apexrealestate.rs
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Skripta za glatko 3D pomeranje
+        function setup3DCard(wrapId, cardId, shimmerId, glareId) {
+            const wrap = document.getElementById(wrapId);
+            const card = document.getElementById(cardId);
+            const shimmer = document.getElementById(shimmerId);
+            const glare = document.getElementById(glareId);
+
+            // Umesto same kartice, Wrapper sada diktira poziciju - on stoji fiksno! Zbog toga ne moze da zatrokira "leave->enter->leave"
+            wrap.addEventListener('mousemove', (e) => {
+                const rect = wrap.getBoundingClientRect();
+                const x = e.clientX - rect.left; 
+                const y = e.clientY - rect.top;  
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                // Racunanje uglova nagiba zavisno od polozaja misa
+                const rotateY = ((x - centerX) / centerX) * 15; // Max 15 stepeni levo/desno
+                const rotateX = -((y - centerY) / centerY) * 15; // Max 15 stepeni gore/dole
+                
+                // Rotiramo unutrašnju Dete-karticu, wrapper ostaje STATICAN i ne gubi miša
+                card.style.transform = `scale3d(1.05, 1.05, 1.05) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                
+                // Centar presijavanja
+                const percentX = (x / rect.width) * 100;
+                const percentY = (y / rect.height) * 100;
+                
+                shimmer.style.background = `radial-gradient(circle at ${percentX}% ${percentY}%, rgba(212,175,55,0.5) 0%, rgba(255,255,255,0.1) 30%, transparent 60%)`;
+                glare.style.background = `radial-gradient(circle at ${percentX}% ${percentY}%, rgba(255,255,255,0.2) 0%, transparent 50%)`;
+            });
+
+            // Kada sklonimo miša sa wrappera, sve se lepo smiruje
+            wrap.addEventListener('mouseleave', () => {
+                card.style.transform = `rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+            });
+        }
+
+        setup3DCard('wrap-front', 'card-front', 'shimmer-front', 'glare-front');
+        setup3DCard('wrap-back', 'card-back', 'shimmer-back', 'glare-back');
+    </script>
+</body>
+</html>

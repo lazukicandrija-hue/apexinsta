@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <title>APEX Story — Novi Stanovi</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { width: 1080px; height: 1920px; overflow: hidden; font-family: 'Space Grotesk', sans-serif; }
+
+        .story {
+            width: 1080px; height: 1920px; position: relative;
+            background: linear-gradient(180deg, #0a0a0a 0%, #0d0b08 50%, #0a0a0a 100%);
+            display: flex; flex-direction: column; align-items: center;
+            overflow: hidden;
+        }
+
+        /* Ambient */
+        .amb1 { position: absolute; top: 300px; right: -100px; width: 400px; height: 400px; border-radius: 50%; background: radial-gradient(circle, rgba(184,148,74,0.07) 0%, transparent 70%); }
+        .amb2 { position: absolute; bottom: 500px; left: -100px; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(184,148,74,0.05) 0%, transparent 70%); }
+
+        .logo { margin-top: 110px; }
+        .logo img { width: 180px; height: 180px; object-fit: contain; filter: drop-shadow(0 4px 30px rgba(184,148,74,0.2)); }
+
+        /* NOVO badge */
+        .novo-badge {
+            margin-top: 60px; display: flex; align-items: center; gap: 12px;
+            padding: 12px 30px; border-radius: 50px;
+            background: linear-gradient(135deg, rgba(184,148,74,0.15), rgba(184,148,74,0.05));
+            border: 1px solid rgba(184,148,74,0.3);
+        }
+        .novo-dot {
+            width: 10px; height: 10px; border-radius: 50%;
+            background: #d4af5a;
+            box-shadow: 0 0 10px rgba(212,175,90,0.6);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.8); } }
+        .novo-text { font-weight: 600; font-size: 14px; letter-spacing: 4px; text-transform: uppercase; color: #B8944A; }
+
+        .headline {
+            margin-top: 40px; text-align: center;
+            font-family: 'DM Serif Display', serif; font-size: 66px; color: #fff; line-height: 1.2;
+        }
+
+        .subtitle { margin-top: 15px; font-weight: 300; font-size: 20px; color: rgba(255,255,255,0.4); }
+
+        /* Listings */
+        .listings { margin-top: 70px; width: 100%; padding: 0 80px; display: flex; flex-direction: column; gap: 18px; }
+        .listing {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 28px 35px; border-radius: 14px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(184,148,74,0.08);
+            border-left: 3px solid #B8944A;
+        }
+        .listing-left { display: flex; flex-direction: column; gap: 6px; }
+        .listing-location { font-weight: 600; font-size: 24px; color: #fff; }
+        .listing-details { font-weight: 300; font-size: 17px; color: rgba(255,255,255,0.4); }
+        .listing-price {
+            font-weight: 700; font-size: 26px;
+            background: linear-gradient(135deg, #d4af5a, #B8944A);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+
+        .more-text {
+            margin-top: 25px; text-align: center;
+            font-family: 'DM Serif Display', serif; font-style: italic;
+            font-size: 22px; color: rgba(184,148,74,0.6);
+        }
+
+        /* Divider */
+        .divider { width: 200px; height: 1px; background: linear-gradient(90deg, transparent, rgba(184,148,74,0.3), transparent); margin: 50px 0; }
+
+        /* CTA */
+        .cta-area { margin-top: auto; margin-bottom: 180px; display: flex; flex-direction: column; align-items: center; gap: 22px; }
+        .cta-btn {
+            padding: 26px 70px; border-radius: 60px;
+            background: linear-gradient(135deg, #B8944A, #d4af5a, #B8944A);
+            font-weight: 700; font-size: 20px; letter-spacing: 3px; text-transform: uppercase;
+            color: #0a0a0a; display: flex; align-items: center; gap: 12px;
+            box-shadow: 0 8px 40px rgba(184,148,74,0.25);
+        }
+        .cta-btn svg { width: 20px; height: 20px; stroke: #0a0a0a; stroke-width: 2.5; fill: none; }
+        .cta-sub { font-weight: 300; font-size: 15px; color: rgba(255,255,255,0.25); letter-spacing: 2px; display: flex; align-items: center; gap: 6px; }
+
+        .noise { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.025; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); pointer-events: none; }
+    </style>
+</head>
+<body>
+<div class="story">
+    <div class="noise"></div>
+    <div class="amb1"></div><div class="amb2"></div>
+
+    <div class="logo"><img src="logo-transparent.png" alt="APEX"></div>
+
+    <div class="novo-badge">
+        <div class="novo-dot"></div>
+        <span class="novo-text">Novo u ponudi</span>
+    </div>
+
+    <div class="headline">Novi stanovi<br>u ponudi!</div>
+    <div class="subtitle">Ažurirano danas</div>
+
+    <div class="listings">
+        <div class="listing">
+            <div class="listing-left">
+                <div class="listing-location">Centar</div>
+                <div class="listing-details">126 m² · 3. sprat · 4 sobe</div>
+            </div>
+            <div class="listing-price">185.000 €</div>
+        </div>
+        <div class="listing">
+            <div class="listing-left">
+                <div class="listing-location">Sajmište</div>
+                <div class="listing-details">44 m² · 1. sprat · 2 sobe</div>
+            </div>
+            <div class="listing-price">128.000 €</div>
+        </div>
+        <div class="listing">
+            <div class="listing-left">
+                <div class="listing-location">Liman III</div>
+                <div class="listing-details">68 m² · 4. sprat · 3 sobe</div>
+            </div>
+            <div class="listing-price">95.000 €</div>
+        </div>
+        <div class="listing">
+            <div class="listing-left">
+                <div class="listing-location">Grbavica</div>
+                <div class="listing-details">52 m² · 2. sprat · 2 sobe</div>
+            </div>
+            <div class="listing-price">112.000 €</div>
+        </div>
+    </div>
+
+    <div class="more-text">I još 12+ nekretnina...</div>
+
+    <div class="cta-area">
+        <div class="cta-btn">
+            Pogledaj sve
+            <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+        <div class="cta-sub">Link u bio ↑</div>
+    </div>
+</div>
+</body>
+</html>

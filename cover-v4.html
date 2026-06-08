@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APEX Real Estate — Cover V4</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    width: 1080px;
+    height: 1080px;
+    overflow: hidden;
+    background: #0a0a0a;
+    font-family: 'Sora', sans-serif;
+    position: relative;
+  }
+
+  /* ── Radial gold glow ── */
+  .bg-glow {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 700px 600px at 50% 52%, rgba(184,148,74,0.10) 0%, rgba(184,148,74,0.04) 40%, transparent 70%),
+      radial-gradient(ellipse 400px 350px at 50% 50%, rgba(212,175,90,0.07) 0%, transparent 60%);
+    z-index: 0;
+  }
+
+  /* ── Dot pattern corner decoration ── */
+  .dot-pattern {
+    position: absolute;
+    bottom: 60px;
+    right: 50px;
+    width: 120px;
+    height: 120px;
+    z-index: 1;
+    opacity: 0.18;
+  }
+  .dot-pattern .dot {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: #B8944A;
+  }
+
+  /* ── Subtle corner lines ── */
+  .corner-line-tl, .corner-line-br {
+    position: absolute;
+    z-index: 1;
+  }
+  .corner-line-tl {
+    top: 40px;
+    left: 40px;
+    width: 60px;
+    height: 60px;
+    border-top: 1px solid rgba(184,148,74,0.15);
+    border-left: 1px solid rgba(184,148,74,0.15);
+  }
+  .corner-line-br {
+    bottom: 40px;
+    right: 40px;
+    width: 60px;
+    height: 60px;
+    border-bottom: 1px solid rgba(184,148,74,0.15);
+    border-right: 1px solid rgba(184,148,74,0.15);
+  }
+
+  /* ── Main layout ── */
+  .main {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* ── Logo ── */
+  .logo-wrap {
+    margin-top: 80px;
+    display: flex;
+    justify-content: center;
+  }
+  .logo-wrap img {
+    width: 300px;
+    height: auto;
+    filter: drop-shadow(0 4px 24px rgba(184,148,74,0.15));
+  }
+
+  /* ── Card stack container ── */
+  .card-stack {
+    position: relative;
+    width: 820px;
+    margin-top: 60px;
+    height: 560px;
+  }
+
+  /* ── Shared card style ── */
+  .card {
+    position: absolute;
+    left: 0;
+    right: 0;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(184,148,74,0.18);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    box-shadow:
+      0 8px 40px rgba(0,0,0,0.35),
+      inset 0 1px 0 rgba(255,255,255,0.04);
+    transition: transform 0.3s ease;
+  }
+
+  /* ── Card 1 — Location ── */
+  .card-1 {
+    top: 0;
+    left: -18px;
+    right: 18px;
+    height: 210px;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 80px;
+  }
+  .card-1::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(184,148,74,0.3) 30%, rgba(212,175,90,0.4) 50%, rgba(184,148,74,0.3) 70%, transparent 100%);
+  }
+  .location-text {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 54px;
+    color: #ffffff;
+    letter-spacing: -0.5px;
+    line-height: 1.15;
+    text-align: center;
+  }
+  .location-text .city {
+    display: block;
+    font-size: 32px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.55);
+    margin-top: 6px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-family: 'Sora', sans-serif;
+  }
+
+  /* ── Na prodaju badge ── */
+  .badge {
+    position: absolute;
+    top: -14px;
+    right: 30px;
+    background: linear-gradient(135deg, #B8944A 0%, #d4af5a 60%, #c9a44e 100%);
+    color: #0a0a0a;
+    font-family: 'Sora', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    padding: 10px 26px;
+    border-radius: 8px;
+    z-index: 10;
+    box-shadow:
+      0 4px 20px rgba(184,148,74,0.35),
+      0 1px 3px rgba(0,0,0,0.3);
+  }
+  .badge::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.15);
+    pointer-events: none;
+  }
+
+  /* ── Card 2 — Details ── */
+  .card-2 {
+    top: 175px;
+    left: 0;
+    right: 0;
+    height: 170px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .card-2::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 40px;
+    right: 40px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(184,148,74,0.12), transparent);
+  }
+  .details-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+  .detail-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 38px;
+  }
+  .detail-item:not(:last-child) {
+    border-right: 1px solid rgba(184,148,74,0.15);
+  }
+  .detail-value {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 40px;
+    color: #d4af5a;
+    line-height: 1;
+    letter-spacing: -0.5px;
+  }
+  .detail-value .unit {
+    font-size: 22px;
+    font-weight: 400;
+    color: rgba(212,175,90,0.7);
+  }
+  .detail-label {
+    font-family: 'Sora', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin-top: 10px;
+  }
+
+  /* ── Card 3 — Price ── */
+  .card-3 {
+    top: 310px;
+    left: 18px;
+    right: -18px;
+    height: 210px;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+  .card-3::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(184,148,74,0.3) 30%, rgba(212,175,90,0.4) 50%, rgba(184,148,74,0.3) 70%, transparent 100%);
+  }
+  .price-label {
+    font-family: 'Sora', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 5px;
+    text-transform: uppercase;
+  }
+  .price-value {
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 72px;
+    background: linear-gradient(135deg, #d4af5a 0%, #f0d78c 40%, #d4af5a 70%, #B8944A 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -1px;
+    line-height: 1;
+    filter: drop-shadow(0 2px 8px rgba(184,148,74,0.2));
+  }
+  .price-line {
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(184,148,74,0.4), transparent);
+    border-radius: 1px;
+    margin-top: 2px;
+  }
+
+  /* ── Decorative floating shapes ── */
+  .float-shape {
+    position: absolute;
+    border-radius: 50%;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .float-shape-1 {
+    top: 180px;
+    left: 60px;
+    width: 90px;
+    height: 90px;
+    border: 1px solid rgba(184,148,74,0.06);
+  }
+  .float-shape-2 {
+    top: 320px;
+    right: 50px;
+    width: 140px;
+    height: 140px;
+    border: 1px solid rgba(184,148,74,0.04);
+  }
+  .float-shape-3 {
+    bottom: 200px;
+    left: 100px;
+    width: 50px;
+    height: 50px;
+    background: rgba(184,148,74,0.03);
+  }
+
+  /* ── Thin vertical gold accent lines ── */
+  .accent-line-left {
+    position: absolute;
+    left: 100px;
+    top: 300px;
+    width: 1px;
+    height: 120px;
+    background: linear-gradient(180deg, transparent, rgba(184,148,74,0.12), transparent);
+    z-index: 1;
+  }
+  .accent-line-right {
+    position: absolute;
+    right: 100px;
+    top: 500px;
+    width: 1px;
+    height: 100px;
+    background: linear-gradient(180deg, transparent, rgba(184,148,74,0.10), transparent);
+    z-index: 1;
+  }
+
+  /* ── Swipe hint ── */
+  .swipe-hint {
+    position: absolute;
+    bottom: 44px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    z-index: 5;
+  }
+  .swipe-chevrons {
+    display: flex;
+    gap: 3px;
+  }
+  .swipe-chevron {
+    width: 10px;
+    height: 10px;
+    border-right: 1.5px solid rgba(184,148,74,0.35);
+    border-bottom: 1.5px solid rgba(184,148,74,0.35);
+    transform: rotate(-45deg);
+  }
+  .swipe-chevron:nth-child(2) { opacity: 0.55; }
+  .swipe-chevron:nth-child(3) { opacity: 0.3; }
+  .swipe-text {
+    font-family: 'Sora', sans-serif;
+    font-size: 10px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.2);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+
+  <!-- Background glow -->
+  <div class="bg-glow"></div>
+
+  <!-- Decorative floating shapes -->
+  <div class="float-shape float-shape-1"></div>
+  <div class="float-shape float-shape-2"></div>
+  <div class="float-shape float-shape-3"></div>
+
+  <!-- Accent lines -->
+  <div class="accent-line-left"></div>
+  <div class="accent-line-right"></div>
+
+  <!-- Corner lines -->
+  <div class="corner-line-tl"></div>
+  <div class="corner-line-br"></div>
+
+  <!-- Dot pattern (bottom-right) -->
+  <div class="dot-pattern" id="dotPattern"></div>
+
+  <!-- Main content -->
+  <div class="main">
+
+    <!-- Logo -->
+    <div class="logo-wrap">
+      <img src="logo-transparent.png" alt="APEX Real Estate">
+    </div>
+
+    <!-- Card Stack -->
+    <div class="card-stack">
+
+      <!-- Card 1 — Location -->
+      <div class="card card-1" id="cardLocation">
+        <div class="badge" id="badgeTip"></div>
+        <div class="location-text" id="locationText"></div>
+      </div>
+
+      <!-- Card 2 — Details -->
+      <div class="card card-2">
+        <div class="details-row">
+          <div class="detail-item">
+            <div class="detail-value" id="detailKvad"></div>
+            <div class="detail-label">Kvadratura</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-value" id="detailSprat"></div>
+            <div class="detail-label">Sprat</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-value" id="detailSobe"></div>
+            <div class="detail-label">Sobe</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3 — Price -->
+      <div class="card card-3">
+        <div class="price-label">Cena</div>
+        <div class="price-value" id="priceValue"></div>
+        <div class="price-line"></div>
+      </div>
+
+    </div><!-- /card-stack -->
+  </div><!-- /main -->
+
+  <!-- Swipe hint -->
+  <div class="swipe-hint">
+    <div class="swipe-chevrons">
+      <div class="swipe-chevron"></div>
+      <div class="swipe-chevron"></div>
+      <div class="swipe-chevron"></div>
+    </div>
+    <div class="swipe-text">Prevucite za više</div>
+  </div>
+
+<script>
+// ─── PROPERTY DATA (edit here) ─────────────────────────────
+const nekretnina = {
+    lokacija:    "Centar, Novi Sad",
+    kvadratura:  "126",
+    sprat:       "3.",
+    sobe:        "4",
+    cena:        "185.000 €",
+    tip:         "Na prodaju"
+};
+// ────────────────────────────────────────────────────────────
+
+(function render() {
+  // Location — split on comma
+  const parts = nekretnina.lokacija.split(",").map(s => s.trim());
+  const neighborhood = parts[0] || "";
+  const city = parts[1] || "";
+  document.getElementById("locationText").innerHTML =
+    neighborhood + (city ? '<span class="city">' + city + '</span>' : '');
+
+  // Badge
+  document.getElementById("badgeTip").textContent = nekretnina.tip;
+
+  // Details
+  document.getElementById("detailKvad").innerHTML =
+    nekretnina.kvadratura + ' <span class="unit">m²</span>';
+  document.getElementById("detailSprat").textContent = nekretnina.sprat;
+  document.getElementById("detailSobe").textContent = nekretnina.sobe;
+
+  // Price
+  document.getElementById("priceValue").textContent = nekretnina.cena;
+
+  // Generate dot pattern
+  const dotContainer = document.getElementById("dotPattern");
+  const cols = 8;
+  const rows = 8;
+  const spacing = 14;
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      // Create a diamond-ish shape by skipping some dots
+      const dist = Math.abs(r - rows/2 + 0.5) + Math.abs(c - cols/2 + 0.5);
+      if (dist > 6) continue;
+      const dot = document.createElement("div");
+      dot.className = "dot";
+      dot.style.left = (c * spacing) + "px";
+      dot.style.top = (r * spacing) + "px";
+      dot.style.opacity = Math.max(0.2, 1 - dist * 0.15);
+      dotContainer.appendChild(dot);
+    }
+  }
+})();
+</script>
+</body>
+</html>

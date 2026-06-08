@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APEX Real Estate — Instagram Feed Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C5A059;
+    --gold-light: #d4b36e;
+    --bg-dark: #000000;
+    --bg-card: #0D0D0D;
+    --bg-surface: #1A1A1A;
+    --bg-elevated: #262626;
+    --text-primary: #F5F0E8;
+    --text-secondary: #8A8A8A;
+    --text-muted: #555;
+    --border: #2a2a2a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    font-family: 'Inter', -apple-system, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .phone-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 20px;
+    min-height: 100vh;
+    background: linear-gradient(145deg, #0a0a0a 0%, #111 50%, #0a0a0a 100%);
+  }
+
+  .phone-frame {
+    width: 430px;
+    max-width: 100%;
+    background: var(--bg-dark);
+    border-radius: 40px;
+    border: 3px solid #222;
+    box-shadow:
+      0 0 0 1px rgba(197,160,89,0.1),
+      0 25px 80px rgba(0,0,0,0.8),
+      0 0 120px rgba(197,160,89,0.03);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .phone-notch {
+    width: 140px;
+    height: 26px;
+    background: #000;
+    border-radius: 0 0 18px 18px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 10;
+  }
+
+  .phone-screen {
+    max-height: 85vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+  }
+  .phone-screen::-webkit-scrollbar { display: none; }
+
+  .status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 24px 8px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .status-bar .time { font-size: 14px; font-weight: 700; }
+  .status-icons { display: flex; gap: 6px; align-items: center; font-size: 13px; }
+
+  .ig-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 16px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .ig-header .username {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .verified {
+    width: 18px; height: 18px;
+    background: #3897f0;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: white;
+    flex-shrink: 0;
+  }
+  .ig-header .actions { display: flex; gap: 18px; font-size: 22px; }
+
+  .profile-section { padding: 16px; }
+
+  .profile-top {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 14px;
+  }
+
+  .profile-avatar {
+    width: 86px;
+    height: 86px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), #8B6914);
+    padding: 3px;
+    flex-shrink: 0;
+  }
+  .profile-avatar-inner {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: var(--bg-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 3px;
+    border: 3px solid var(--bg-dark);
+  }
+
+  .profile-stats {
+    display: flex;
+    flex: 1;
+    justify-content: space-around;
+  }
+  .stat-item { text-align: center; }
+  .stat-number { font-size: 17px; font-weight: 700; }
+  .stat-label { font-size: 12px; color: var(--text-secondary); margin-top: 1px; }
+
+  .bio { padding: 0 0 12px; }
+  .bio-name { font-weight: 700; font-size: 13px; margin-bottom: 2px; }
+  .bio-category { font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
+  .bio-text { font-size: 13px; line-height: 1.45; }
+  .bio-text .gold { color: var(--gold); }
+  .bio-text a { color: #E0D9CF; text-decoration: none; font-weight: 600; }
+
+  .profile-buttons { display: flex; gap: 6px; margin-bottom: 16px; }
+  .btn-profile {
+    flex: 1;
+    padding: 7px 0;
+    border-radius: 8px;
+    border: none;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+  }
+  .btn-primary { background: var(--gold); color: #000; }
+  .btn-secondary { background: var(--bg-elevated); color: var(--text-primary); }
+
+  .highlights {
+    display: flex;
+    gap: 14px;
+    padding: 4px 0 14px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .highlights::-webkit-scrollbar { display: none; }
+  .highlight-item { display: flex; flex-direction: column; align-items: center; gap: 5px; flex-shrink: 0; }
+  .highlight-circle {
+    width: 62px; height: 62px;
+    border-radius: 50%;
+    border: 2px solid var(--gold);
+    padding: 3px;
+  }
+  .highlight-inner {
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    background: var(--bg-surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+  }
+  .highlight-label { font-size: 11px; max-width: 68px; text-align: center; }
+
+  .feed-tabs {
+    display: flex;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .feed-tab {
+    flex: 1;
+    text-align: center;
+    padding: 12px 0;
+    font-size: 22px;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  .feed-tab.active { color: var(--text-primary); border-bottom-color: var(--text-primary); }
+
+  .feed-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+  .grid-item {
+    aspect-ratio: 1;
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+  }
+  .grid-item img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+  .grid-item:hover img { transform: scale(1.05); opacity: 0.85; }
+  .grid-item .icon-badge {
+    position: absolute;
+    top: 8px; right: 8px;
+    font-size: 14px;
+    color: white;
+    filter: drop-shadow(0 1px 3px rgba(0,0,0,0.8));
+  }
+
+  /* POST ORDER INDICATOR */
+  .grid-item .post-order {
+    position: absolute;
+    bottom: 6px; left: 6px;
+    background: rgba(0,0,0,0.7);
+    color: var(--gold);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.92);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(8px);
+  }
+  .modal-overlay.active { display: flex; }
+
+  .modal-content {
+    width: 90%; max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: var(--bg-card);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    scrollbar-width: none;
+    animation: modalIn 0.3s ease;
+  }
+  .modal-content::-webkit-scrollbar { display: none; }
+
+  @keyframes modalIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .modal-avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), #8B6914);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 10px; font-weight: 700;
+    color: var(--bg-dark);
+    letter-spacing: 1px;
+    flex-shrink: 0;
+  }
+  .modal-username { font-size: 13px; font-weight: 600; }
+  .modal-location { font-size: 11px; color: var(--text-secondary); }
+  .modal-close {
+    margin-left: auto;
+    font-size: 22px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    background: none; border: none;
+    padding: 4px;
+  }
+  .modal-image { width: 100%; display: block; }
+  .modal-actions {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 14px;
+    font-size: 24px;
+  }
+  .modal-actions-left { display: flex; gap: 16px; }
+  .modal-action { cursor: pointer; transition: transform 0.15s; }
+  .modal-action:hover { transform: scale(1.15); }
+  .modal-likes { padding: 0 14px 4px; font-size: 13px; font-weight: 600; }
+  .modal-caption {
+    padding: 4px 14px 14px;
+    font-size: 13px;
+    line-height: 1.55;
+    white-space: pre-wrap;
+  }
+  .modal-caption .u { font-weight: 600; margin-right: 4px; }
+  .modal-caption .h { color: var(--gold); }
+  .modal-time {
+    padding: 0 14px 14px;
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
+
+  .watermark {
+    text-align: center;
+    padding: 30px 16px;
+    border-top: 1px solid var(--border);
+  }
+  .watermark-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    letter-spacing: 8px;
+    color: var(--gold);
+    margin-bottom: 4px;
+  }
+  .watermark-sub {
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+  }
+
+  .page-title {
+    text-align: center;
+    padding: 0 20px 10px;
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    letter-spacing: 6px;
+    color: var(--gold);
+  }
+  .page-subtitle {
+    text-align: center;
+    padding: 0 20px 30px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    letter-spacing: 2px;
+  }
+
+  /* Legend below phone */
+  .legend {
+    max-width: 430px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  .legend h3 {
+    color: var(--gold);
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    margin-bottom: 12px;
+    letter-spacing: 2px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  .legend-num {
+    background: var(--gold);
+    color: #000;
+    font-weight: 700;
+    font-size: 11px;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .legend-type {
+    color: var(--gold);
+    font-weight: 600;
+    font-size: 12px;
+    margin-bottom: 2px;
+  }
+  .legend-desc { color: var(--text-secondary); }
+
+  @media (max-width: 500px) {
+    .phone-frame { border-radius: 0; border: none; box-shadow: none; }
+    .phone-notch { display: none; }
+    .phone-container { padding: 0; }
+    .phone-screen { max-height: 100vh; }
+  }
+</style>
+</head>
+<body>
+
+<div class="phone-container">
+<div style="display: flex; flex-direction: column; align-items: center;">
+
+  <div class="page-title">A P E X</div>
+  <div class="page-subtitle">INSTAGRAM FEED PREVIEW — LAUNCH PLAN</div>
+
+  <div class="phone-frame">
+    <div class="phone-notch"></div>
+    <div class="phone-screen">
+
+      <div class="status-bar">
+        <span class="time">13:07</span>
+        <div class="status-icons">📶 🔋</div>
+      </div>
+
+      <div class="ig-header">
+        <div class="username">apexrealestaters <span class="verified">✓</span></div>
+        <div class="actions">＋ ☰</div>
+      </div>
+
+      <div class="profile-section">
+        <div class="profile-top">
+          <div class="profile-avatar">
+            <div class="profile-avatar-inner">A</div>
+          </div>
+          <div class="profile-stats">
+            <div class="stat-item"><div class="stat-number">18</div><div class="stat-label">posts</div></div>
+            <div class="stat-item"><div class="stat-number">847</div><div class="stat-label">followers</div></div>
+            <div class="stat-item"><div class="stat-number">215</div><div class="stat-label">following</div></div>
+          </div>
+        </div>
+
+        <div class="bio">
+          <div class="bio-name">APEX Real Estate</div>
+          <div class="bio-category">Agencija za nekretnine</div>
+          <div class="bio-text">
+            🏠 Premium agencija za nekretnine<br>
+            📍 Bulevar Oslobođenja 76, Novi Sad<br>
+            <span class="gold">🔑 Od ideje do ključa</span><br>
+            📞 064 333 5757<br>
+            <a href="https://apexrealestate.rs">apexrealestate.rs</a>
+          </div>
+        </div>
+
+        <div class="profile-buttons">
+          <button class="btn-profile btn-primary">Pratite</button>
+          <button class="btn-profile btn-secondary">Poruka</button>
+          <button class="btn-profile btn-secondary" style="flex:0.3">✉</button>
+        </div>
+
+        <div class="highlights">
+          <div class="highlight-item"><div class="highlight-circle"><div class="highlight-inner">🏠</div></div><span class="highlight-label">Ponuda</span></div>
+          <div class="highlight-item"><div class="highlight-circle"><div class="highlight-inner">🔑</div></div><span class="highlight-label">Prodato</span></div>
+          <div class="highlight-item"><div class="highlight-circle"><div class="highlight-inner">⭐</div></div><span class="highlight-label">Recenzije</span></div>
+          <div class="highlight-item"><div class="highlight-circle"><div class="highlight-inner">📊</div></div><span class="highlight-label">Tržište</span></div>
+          <div class="highlight-item"><div class="highlight-circle"><div class="highlight-inner">📍</div></div><span class="highlight-label">Lokacije</span></div>
+          <div class="highlight-item"><div class="highlight-circle"><div class="highlight-inner">👤</div></div><span class="highlight-label">O nama</span></div>
+        </div>
+      </div>
+
+      <div class="feed-tabs">
+        <div class="feed-tab active">⊞</div>
+        <div class="feed-tab">🎬</div>
+        <div class="feed-tab">🏷</div>
+      </div>
+
+      <!-- GRID — najnoviji gore levo, najstariji dole desno -->
+      <div class="feed-grid">
+        <!-- Row 0 (NAJNOVIJI — diversified row) -->
+        <div class="grid-item" onclick="window.location.href='post19-ovoiliono.html'">
+          <img src="templates/post19_ovoiliono.png" alt="Terasa ili dvorište?">
+          <span class="post-order">POST 19</span>
+        </div>
+        <div class="grid-item" onclick="window.location.href='post18-pogled.html'">
+          <img src="templates/post18_pogled.png" alt="Vaš sledeći pogled">
+          <span class="post-order">POST 18</span>
+        </div>
+        <div class="grid-item" onclick="window.location.href='post17-daliznate.html'">
+          <img src="templates/post17_daliznate.png" alt="Da li znate? 67%">
+          <span class="post-order">POST 17</span>
+        </div>
+
+        <!-- Row 1 (edukativni red) -->
+        <div class="grid-item" onclick="window.location.href='post15-cekam-pad.html'">
+          <img src="templates/post15_cover.png" alt="Čekam pad cena">
+          <span class="icon-badge">◫</span>
+          <span class="post-order">POST 16</span>
+        </div>
+        <div class="grid-item" onclick="window.location.href='post30-offplan.html'">
+          <img src="templates/post30_slide1_cover.png" alt="Kupovina u izgradnji">
+          <span class="icon-badge">◫</span>
+          <span class="post-order">POST 30</span>
+        </div>
+        <div class="grid-item" onclick="window.location.href='post4-kvart.html'">
+          <img src="templates/post4_slide1_cover.png" alt="Kako izabrati kvart">
+          <span class="icon-badge">◫</span>
+          <span class="post-order">POST 15</span>
+        </div>
+        <div class="grid-item" onclick="window.location.href='post14-koraci.html'">
+          <img src="templates/post14_cover.png" alt="Kupovina korak po korak">
+          <span class="icon-badge">◫</span>
+          <span class="post-order">POST 14</span>
+        </div>
+        <div class="grid-item" onclick="window.location.href='post13-novogradnja.html'">
+          <img src="templates/post13_slide1_cover.png" alt="Novogradnja vs Starogradnja">
+          <span class="icon-badge">◫</span>
+          <span class="post-order">POST 13</span>
+        </div>
+
+        <!-- Row 1 (estetski red) -->
+        <div class="grid-item" onclick="openPost(3)">
+          <img src="templates/post10_novi_sad_night.png" alt="Novi Sad golden hour">
+          <span class="post-order">POST 12</span>
+        </div>
+        <div class="grid-item" onclick="openPost(4)">
+          <img src="templates/post11_apex_logo.png" alt="APEX Logo">
+          <span class="post-order">POST 11</span>
+        </div>
+        <div class="grid-item" onclick="openPost(5)">
+          <img src="templates/post12_novi_sad_night2.png" alt="Petrovaradin golden hour">
+          <span class="post-order">POST 10</span>
+        </div>
+
+        <!-- Row 2 -->
+        <div class="grid-item" onclick="openPost(6)">
+          <img src="templates/tip_of_week_post.png" alt="Savet nedelje">
+          <span class="post-order">POST 9</span>
+        </div>
+        <div class="grid-item" onclick="openPost(7)">
+          <img src="templates/feed_post_drone.png" alt="Novi Sad drone">
+          <span class="post-order">POST 8</span>
+        </div>
+        <div class="grid-item" onclick="window.location.href='post7-renovacija.html'">
+          <img src="templates/carousel_cover_slide.png" alt="5 grešaka">
+          <span class="icon-badge">◫</span>
+          <span class="post-order">POST 7</span>
+        </div>
+
+        <!-- Row 3 -->
+        <div class="grid-item" onclick="window.location.href='post6-agent.html'">
+          <img src="templates/post_novi_sad_love.png" alt="Poznajemo grad">
+          <span class="post-order">POST 6</span>
+        </div>
+        <div class="grid-item" onclick="window.location.href='post5-vrednosti.html'">
+          <img src="templates/post5_slide1_cover.png" alt="Šta nas čini drugačijim">
+          <span class="icon-badge">◫</span>
+          <span class="post-order">POST 5</span>
+        </div>
+        <div class="grid-item" onclick="openPost(11)">
+          <img src="templates/post_why_apex.png" alt="Zašto APEX">
+          <span class="icon-badge">◫</span>
+          <span class="post-order">POST 4</span>
+        </div>
+
+        <!-- Row 4 (najstariji — prvi objavljeni) -->
+        <div class="grid-item" onclick="window.location.href='post3-misija.html'">
+          <img src="templates/post3_mission.png" alt="Od ideje do ključa">
+          <span class="post-order">POST 3</span>
+        </div>
+        <div class="grid-item" onclick="window.location.href='post2-kljucevi.html'">
+          <img src="templates/post2_slide1_cover.png" alt="5 stvari pre kupovine">
+          <span class="icon-badge">◫</span>
+          <span class="post-order">POST 2</span>
+        </div>
+        <div class="grid-item" onclick="window.location.href='post1-o-nama.html'">
+          <img src="templates/post_about_us.png" alt="O nama">
+          <span class="post-order">POST 1</span>
+        </div>
+      </div>
+
+      <div class="watermark">
+        <div class="watermark-logo">A P E X</div>
+        <div class="watermark-sub">Real Estate • Novi Sad</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- REDOSLED OBJAVLJIVANJA -->
+  <div class="legend">
+    <h3>📋 REDOSLED OBJAVLJIVANJA</h3>
+
+    <div class="legend-item">
+      <div class="legend-num">1</div>
+      <div><div class="legend-type">O NAMA — Predstavljanje brenda</div><div class="legend-desc">Prvi post. APEX logo, misija, 3 vrednosti. "Evo ko smo."</div></div>
+    </div>
+    <div class="legend-item">
+      <div class="legend-num">2</div>
+      <div><div class="legend-type">EDUKACIJA — "5 stvari pre kupovine"</div><div class="legend-desc">Carousel sa 6 slajdova. Praktični saveti — save heavy.</div></div>
+    </div>
+    <div class="legend-item">
+      <div class="legend-num">3</div>
+      <div><div class="legend-type">MISIJA — "Od ideje do ključa"</div><div class="legend-desc">Core brand poruka sa cinematic vizualom.</div></div>
+    </div>
+    <div class="legend-item">
+      <div class="legend-num">4</div>
+      <div><div class="legend-type">CAROUSEL — "Zašto APEX?"</div><div class="legend-desc">5 razloga zašto nam klijenti veruju. Gradi autoritet.</div></div>
+    </div>
+    <div class="legend-item">
+      <div class="legend-num">5</div>
+      <div><div class="legend-type">CAROUSEL — "Šta nas čini drugačijim?"</div><div class="legend-desc">4 konkretna obećanja koja grade poverenje. Trust-building.</div></div>
+    </div>
+    <div class="legend-item">
+      <div class="legend-num">6</div>
+      <div><div class="legend-type">GRAD — "Poznajemo svaki ćošak"</div><div class="legend-desc">Novi Sad noćna fotografija. Hyper-local autoritet.</div></div>
+    </div>
+    <div class="legend-item">
+      <div class="legend-num">7</div>
+      <div><div class="legend-type">EDUKACIJA — "5 grešaka kupaca"</div><div class="legend-desc">Carousel sa savjetima. Engage + save heavy.</div></div>
+    </div>
+    <div class="legend-item">
+      <div class="legend-num">8</div>
+      <div><div class="legend-type">GRAD — Drone perspektiva</div><div class="legend-desc">Aerial shot Novog Sada. Wow faktor.</div></div>
+    </div>
+    <div class="legend-item">
+      <div class="legend-num">9</div>
+      <div><div class="legend-type">SAVET NEDELJE</div><div class="legend-desc">Praktičan pravni savjet. Recurring rubrika.</div></div>
+    </div>
+    <div class="legend-item">
+      <div class="legend-num">10</div>
+      <div><div class="legend-type">ESTETIKA — Petrovaradin noću</div><div class="legend-desc">Noćna estetska slika. Desna strana estetskog reda — postavi PRVU.</div></div>
+    </div>
+    <div class="legend-item">
+      <div class="legend-num">11</div>
+      <div><div class="legend-type">BREND — APEX Logo</div><div class="legend-desc">Samo APEX logo na crnoj pozadini. Centar estetskog reda — postavi DRUGU.</div></div>
+    </div>
+    <div class="legend-item">
+      <div class="legend-num">12</div>
+      <div><div class="legend-type">ESTETIKA — Novi Sad golden hour</div><div class="legend-desc">Gradski kej sa crkvama u golden hour. Leva strana estetskog reda.</div></div>
+    </div>
+    <div class="legend-item">
+      <div class="legend-num">13</div>
+      <div><div class="legend-type">EDUKACIJA — "Novogradnja vs. Starogradnja"</div><div class="legend-desc">Carousel sa poređenjem prednosti i mana. Save heavy — postavi PRVU od novih 3.</div></div>
+    </div>
+    <div class="legend-item">
+      <div class="legend-num">14</div>
+      <div><div class="legend-type">EDUKACIJA — "Korak po korak"</div><div class="legend-desc">Carousel sa 5 koraka kupovine. Proces od A do Z — postavi DRUGU.</div></div>
+    </div>
+    <div class="legend-item">
+      <div class="legend-num">15</div>
+      <div><div class="legend-type">EDUKACIJA — "Kako izabrati PRAVI kvart?"</div><div class="legend-desc">Carousel sa 4 faktora za odabir lokacije — postavi TREĆU (poslednju).</div></div>
+    </div>
+    <div class="legend-item">
+      <div class="legend-num">16</div>
+      <div><div class="legend-type">TRŽIŠTE — "Čekam da padnu cene"</div><div class="legend-desc">Carousel sa RGZ podacima o ceni.</div></div>
+    </div>
+    <div class="legend-item">
+      <div class="legend-num">17</div>
+      <div><div class="legend-type">DA LI ZNATE? 💡 — Quick Fact</div><div class="legend-desc">Minimalistički tipografski post. Potpuno drugačiji template. NOVI POST.</div></div>
+    </div>
+    <div class="legend-item">
+      <div class="legend-num">18</div>
+      <div><div class="legend-type">LIFESTYLE ☀️ — Vaš sledeći pogled</div><div class="legend-desc">Aspiracioni post sa pogledom sa terase. Emotivan, kratak caption. NOVI POST.</div></div>
+    </div>
+    <div class="legend-item">
+      <div class="legend-num">19</div>
+      <div><div class="legend-type">OVO ILI ONO? 🤔 — Terasa ili dvorište</div><div class="legend-desc">Interaktivni engagement post. Split-screen vizual. NOVI POST.</div></div>
+    </div>
+    <div class="legend-item">
+      <div class="legend-num">30</div>
+      <div><div class="legend-type">EDUKACIJA — "Kupovina u izgradnji (Off-Plan)"</div><div class="legend-desc">Carousel sa 6 slajdova o pametnim investicijama.</div></div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="postModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-avatar">A</div>
+      <div>
+        <div class="modal-username">apexrealestaters</div>
+        <div class="modal-location" id="modalLocation">Novi Sad, Serbia</div>
+      </div>
+      <button class="modal-close" onclick="closePost()">✕</button>
+    </div>
+    <img class="modal-image" id="modalImage" src="" alt="Post">
+    <div class="modal-actions">
+      <div class="modal-actions-left">
+        <span class="modal-action">♡</span>
+        <span class="modal-action">💬</span>
+        <span class="modal-action">➤</span>
+      </div>
+      <span class="modal-action">🔖</span>
+    </div>
+    <div class="modal-likes" id="modalLikes"></div>
+    <div class="modal-caption" id="modalCaption"></div>
+    <div class="modal-time" id="modalTime"></div>
+  </div>
+</div>
+
+<script>
+const posts = [
+  // 0 — Post 15: Kako izabrati PRAVI kvart?
+  {
+    img: 'templates/post15_cover.png',
+    location: 'Novi Sad, Serbia',
+    likes: '421 likes',
+    time: 'Danas',
+    caption: `<span class="u">apexrealestaters</span> Kvart u kojem živite menja SVE. 🏡
+
+Nije bitna samo cena po kvadratu — bitno je šta vas okružuje.
+
+Prevucite ➡️ i saznajte 4 ključna faktora:
+
+1️⃣ Blizina posla i škola
+2️⃣ Infrastruktura (prodavnice, parkovi, prevoz)
+3️⃣ Bezbednost i komšiluk
+4️⃣ Potencijal za rast vrednosti
+
+📍 Pitajte nas za preporuku kvarta — mi poznajemo svaki ćošak Novog Sada.
+📞 064 333 5757`
+  },
+  // 1 — Post 14: Kupovina stana korak po korak
+  {
+    img: 'templates/post14_cover.png',
+    location: 'Novi Sad, Serbia',
+    likes: '387 likes',
+    time: 'Danas',
+    caption: `<span class="u">apexrealestaters</span> Kupovina stana ne mora biti stresna. 🔑
+
+Kad znate korake unapred, sve ide lakše.
+
+Prevucite ➡️ za 5 koraka od pretrage do ključa:
+
+Korak 1 — Pretraga i odabir nekretnine
+Korak 2 — Predugovor i kapara
+Korak 3 — Pravna provera dokumentacije
+Korak 4 — Kupoprodajni ugovor
+Korak 5 — Uknjižba i primopredaja
+
+📩 Vodimo vas kroz ceo proces. DM ili pozovite 064 333 5757.`
+  },
+  // 2 — Post 13: Novogradnja vs Starogradnja
+  {
+    img: 'templates/post13_slide1_cover.png',
+    location: 'Novi Sad, Serbia',
+    likes: '534 likes',
+    time: 'Juče',
+    caption: `<span class="u">apexrealestaters</span> Večita dilema kupaca: Novogradnja ili starogradnja? 🏢🏛️
+
+Nema tačnog odgovora, postoji samo ono što odgovara VAŠIM potrebama.
+
+Prevucite ➡️ i pogledajte ključne razlike:
+
+1️⃣ Novogradnja
+✅ Garancija na radove
+✅ Povrat PDV-a za prvog kupca
+✅ Savremen raspored i energetska efikasnost
+❌ Moguć rizik kod probijanja rokova
+
+2️⃣ Starogradnja
+✅ Odmah useljivo
+✅ Formirana i organizovana naselja
+✅ Mogućnost odmah uvida u stanje zgrade
+❌ Potrebna dodatna ulaganja (struja, voda)
+
+🔖 Sačuvajte ovaj post — trebat će vam kada donosite odluku.
+📩 Imate dilemu? Besplatna konsultacija — javite se u DM.`
+  },
+  // 3 — Post 12: Novi Sad golden hour (leva pozicija)
+  {
+    img: 'templates/post10_novi_sad_night.png',
+    location: 'Novi Sad, Serbia',
+    likes: '512 likes',
+    time: '2 dana',
+    caption: `<span class="u">apexrealestaters</span> Kad sunce zagrli grad. ☀️
+
+Novi Sad u Golden Hour-u — refleksije na Dunavu, siluete tornjeva, i toplina koja se oseti u svakom ćošku ovog grada.
+
+Ovo nije samo mesto gde prodajemo nekretnine. Ovo je grad u koji se zaljubljujemo iznova, svakog dana.
+
+📍 Novi Sad
+🔑 Od ideje do ključa.`
+  },
+  // 1 — Post 11: APEX Logo (centar)
+  {
+    img: 'templates/post11_apex_logo.png',
+    location: 'Novi Sad, Serbia',
+    likes: '634 likes',
+    time: 'Danas',
+    caption: `<span class="u">apexrealestaters</span> ◆
+
+<span class="h">#APEX #APEXRealEstate #LuxuryRealEstate #NoviSad #Premium</span>`
+  },
+  // 2 — Post 10: Petrovaradin noću (desna pozicija)
+  {
+    img: 'templates/post12_novi_sad_night2.png',
+    location: 'Novi Sad, Serbia',
+    likes: '478 likes',
+    time: 'Juče',
+    caption: `<span class="u">apexrealestaters</span> 🏰
+
+<span class="h">#Petrovaradin #NoviSad #NightPhotography #APEXRealEstate #Fortress #Dunav</span>`
+  },
+  // 3 — Post 9: Savet nedelje
+  {
+    img: 'templates/tip_of_week_post.png',
+    location: 'Novi Sad, Serbia',
+    likes: '89 likes',
+    time: '2 dana',
+    caption: `<span class="u">apexrealestaters</span> 💡 SAVET NEDELJE
+
+Uvek proverite da li nekretnina ima hipotekarno opterećenje pre nego što potpišete predugovor.
+
+Ovo je jedan od najčešćih propusta koji može koštati kupce hiljade evra. Izvod iz katastra je vaš najbolji prijatelj. ✅
+
+🔖 Sačuvajte ovaj post — trebat će vam.
+📩 Imate pitanje? Pišite nam u DM.
+
+<span class="h">#SavetNedelje #Nekretnine #APEXRealEstate #PravniSaveti #NoviSad</span>`
+  },
+  // 4 — Post 8: Drone Novi Sad
+  {
+    img: 'templates/feed_post_drone.png',
+    location: 'Novi Sad, Serbia',
+    likes: '234 likes',
+    time: '2 dana',
+    caption: `<span class="u">apexrealestaters</span> 🏙 NOVI SAD — Iz ptičje perspektive
+
+Ovaj grad nikad ne prestaje da nas oduševljava. Svaki kvart ima svoju priču, svaki pogled novu perspektivu.
+
+Koji je vaš omiljeni kvart? ⬇️
+
+📍 Mi poznajemo svaki — i pomažemo vam da u njemu pronađete dom.
+📩 DM za razgovor.
+
+<span class="h">#NoviSad #SrbijaDrone #APEXRealEstate #NoviSadIzVazduha #Nekretnine</span>`
+  },
+  // 5 — Post 7: 5 grešaka carousel
+  {
+    img: 'templates/carousel_cover_slide.png',
+    location: 'Novi Sad, Serbia',
+    likes: '312 likes',
+    time: '4 dana',
+    caption: `<span class="u">apexrealestaters</span> ⚠️ 5 GREŠAKA koje kupci prave prilikom kupovine prvog stana
+
+Kupovina prvog stana je uzbudljiva — ali i puna zamki.
+
+Prevucite ➡️ da saznate šta izbegavati:
+
+1️⃣ Ne proveravaju pravnu dokumentaciju
+2️⃣ Ignorišu skrivene troškove (porez, overa, agent)
+3️⃣ Donose odluku na prvom obilasku
+4️⃣ Ne istražuju lokaciju dovoljno
+5️⃣ Ne koriste stručnu pomoć agencije
+
+💬 Koju grešku ste VI napravili? Pišite ⬇️
+🔖 Sačuvajte za kasniju referencu!
+
+<span class="h">#PrviStan #SavjetiZaKupce #APEXRealEstate #KupovinaStana #NoviSad</span>`
+  },
+  // 6 — Post 6: Poznajemo svaki ćošak
+  {
+    img: 'templates/post_novi_sad_love.png',
+    location: 'Novi Sad, Serbia',
+    likes: '456 likes',
+    time: '6 dana',
+    caption: `<span class="u">apexrealestaters</span> Poznajemo svaki ćošak ovog grada. 🌆
+
+Novi Sad nije samo mesto gde radimo — to je grad koji volimo.
+
+Svaka ulica, svaki kvart, svaki pogled na Dunav... Zato znamo gde je najbolje živeti, investirati i graditi budućnost.
+
+📍 Gde god u Novom Sadu tražite nekretninu — mi smo vaš vodič.
+📞 064 333 5757
+
+<span class="h">#NoviSad #APEXRealEstate #NašGrad #Nekretnine #Dunav</span>`
+  },
+  // 7 — Post 5: Šta nas čini drugačijim? (carousel)
+  {
+    img: 'templates/post5_slide1_cover.png',
+    location: 'Novi Sad, Serbia',
+    likes: '267 likes',
+    time: '1 nedelja',
+    caption: `<span class="u">apexrealestaters</span> 💎 Šta nas čini drugačijim?
+
+Kupovina nekretnine je jedna od najvećih životnih odluka. Zaslužujete agenciju koja to shvata ozbiljno.
+
+Prevucite ➡️ i saznajte zašto klijenti biraju APEX:
+
+🚫 Bez skrivenih provizija — znate cenu unapred
+⚖️ Besplatna pravna provera svake nekretnine
+📱 Odgovaramo za 30 minuta — garantovano
+🏠 Podrška i POSLE kupovine
+
+Mi ne prodajemo stanove. Mi vam pomažemo da pronađete dom.
+
+📍 Mičurinova 74, Novi Sad
+📞 064 333 5757
+🌐 apexrealestate.rs
+
+<span class="h">#APEXRealEstate #NašeVrednosti #NoviSad #Nekretnine #BesplatnaPravnaProvera</span>`
+  },
+  // 8 — Post 4: Zašto APEX carousel
+  {
+    img: 'templates/post_why_apex.png',
+    location: 'Novi Sad, Serbia',
+    likes: '267 likes',
+    time: '1 nedelja',
+    caption: `<span class="u">apexrealestaters</span> ZAŠTO APEX? 🏆
+
+5 razloga zašto nam klijenti veruju ➡️
+
+1️⃣ Poznajemo svaki kvart Novog Sada
+2️⃣ Potpuna pravna podrška — od ugovora do uknjižbe
+3️⃣ Profesionalna prezentacija nekretnina (foto, video, drone)
+4️⃣ Transparentni uslovi — bez skrivenih troškova
+5️⃣ Personalizovan pristup svakom klijentu
+
+📩 DM ili pozovite 064 333 5757
+
+<span class="h">#ZaštoAPEX #APEXRealEstate #NoviSad #AgencijaZaNekretnine</span>`
+  },
+  // 9 — Post 3: Od ideje do ključa (single image)
+  {
+    img: 'templates/post3_mission.png',
+    location: 'Novi Sad, Serbia',
+    likes: '345 likes',
+    time: '2 nedelje',
+    caption: `<span class="u">apexrealestaters</span> Od ideje do ključa. 🔑
+
+To nije samo naš slogan — to je obećanje.
+
+Od prvog razgovora, preko pretrage, pravne podrške i pregovora, sve do momenta kad ključ bude u vašoj ruci — mi smo uz vas.
+
+Svaki korak je važan:
+🔎 Pretraga — pronalazimo nekretnine koje odgovaraju vašim potrebama
+⚖️ Sigurnost — kompletna pravna provera i zaštita
+🤝 Pregovori — zastupamo vaše interese do kraja
+🔑 Ključ — momenat kad vaš novi dom postane stvarnost
+
+APEX Real Estate — vaš partner na putu do savršene nekretnine.
+
+📍 Mičurinova 74, Novi Sad
+📞 064 333 5757
+🌐 apexrealestate.rs
+
+<span class="h">#OdIdejDoKljuča #APEXRealEstate #NoviSad #VašDom #Nekretnine</span>`
+  },
+  // 10 — Post 2: 5 stvari pre kupovine (carousel)
+  {
+    img: 'templates/post2_slide1_cover.png',
+    location: 'Novi Sad, Serbia',
+    likes: '198 likes',
+    time: '2 nedelje',
+    caption: `<span class="u">apexrealestaters</span> 📋 5 STVARI koje MORATE proveriti pre kupovine stana!
+
+Kupovina nekretnine je često životna investicija. Ne dozvolite da vas iznenađenja koštaju hiljade evra.
+
+Prevucite ➡️ i zapamtite ovo:
+
+1️⃣ Vlasnički list i uknjižba
+2️⃣ Hipoteka i tereti
+3️⃣ Građevinska i upotrebna dozvola
+4️⃣ Stanje instalacija
+5️⃣ Lokacija i okruženje
+
+🔖 Sačuvajte ovaj post — trebat će vam.
+📩 Imate pitanje? Javite nam se u DM.
+
+<span class="h">#KupovinaStana #APEXRealEstate #NoviSad #Nekretnine #PravniSaveti</span>`
+  },
+  // 11 — Post 1: O nama (PRVI POST)
+  {
+    img: 'templates/post_about_us.png',
+    location: 'Novi Sad, Serbia',
+    likes: '156 likes',
+    time: '2 nedelje',
+    caption: `<span class="u">apexrealestaters</span> Malo više o nama. 👋
+
+Mi smo APEX Real Estate — premium agencija za nekretnine iz Novog Sada.
+
+Verujemo da pronalaženje savršene nekretnine nije samo transakcija — to je putovanje. I mi smo tu da vas vodimo na svakom koraku.
+
+◆ Profesionalnost
+◆ Posvećenost
+◆ Povjerenje
+
+📍 Bulevar Oslobođenja 76, Novi Sad
+📞 064 333 5757
+🌐 apexrealestate.rs
+
+Dobrodošli. 🏠✨
+
+<span class="h">#APEXRealEstate #ONama #NoviSad #AgencijaZaNekretnine #Premium</span>`
+  }
+];
+
+function openPost(i) {
+  const p = posts[i]; if (!p) return;
+  document.getElementById('modalImage').src = p.img;
+  document.getElementById('modalLocation').textContent = p.location;
+  document.getElementById('modalLikes').textContent = p.likes;
+  document.getElementById('modalCaption').innerHTML = p.caption;
+  document.getElementById('modalTime').textContent = p.time;
+  document.getElementById('postModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closePost() {
+  document.getElementById('postModal').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('postModal').addEventListener('click', e => { if (e.target.id === 'postModal') closePost(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closePost(); });
+</script>
+
+</body>
+</html>

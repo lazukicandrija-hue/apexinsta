@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1080">
+<title>APEX Real Estate – Cover V6</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    width: 1080px;
+    height: 1080px;
+    overflow: hidden;
+    background: #0a0a0a;
+    font-family: 'Outfit', sans-serif;
+    color: #ffffff;
+    position: relative;
+  }
+
+  /* ── Geometric grid background ── */
+  .grid-bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(to right,  rgba(184,148,74,0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(184,148,74,0.04) 1px, transparent 1px);
+    background-size: 90px 90px;
+    z-index: 0;
+  }
+
+  /* subtle radial vignette */
+  .vignette {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.55) 100%);
+    z-index: 1;
+  }
+
+  /* ── Corner bracket decorations ── */
+  .corner-bracket {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    z-index: 5;
+  }
+  .corner-bracket::before,
+  .corner-bracket::after {
+    content: '';
+    position: absolute;
+    background: #B8944A;
+  }
+  /* top-left */
+  .corner-tl {
+    top: 40px;
+    left: 40px;
+  }
+  .corner-tl::before {
+    top: 0; left: 0;
+    width: 2px; height: 60px;
+  }
+  .corner-tl::after {
+    top: 0; left: 0;
+    width: 60px; height: 2px;
+  }
+  /* bottom-right */
+  .corner-br {
+    bottom: 40px;
+    right: 40px;
+  }
+  .corner-br::before {
+    bottom: 0; right: 0;
+    width: 2px; height: 60px;
+  }
+  .corner-br::after {
+    bottom: 0; right: 0;
+    width: 60px; height: 2px;
+  }
+
+  /* ── Main content ── */
+  .content {
+    position: relative;
+    z-index: 3;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  /* ── Na prodaju badge ── */
+  .badge {
+    margin-top: 58px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 28px;
+    border: 1px solid rgba(184,148,74,0.5);
+    border-radius: 100px;
+    background: rgba(184,148,74,0.08);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #d4af5a;
+  }
+  .badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #d4af5a;
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* ── Logo ── */
+  .logo-wrap {
+    margin-top: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .logo-wrap img {
+    height: 360px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 30px rgba(184,148,74,0.15));
+  }
+
+  /* ── Divider line ── */
+  .divider {
+    width: 60%;
+    height: 2px;
+    margin-top: 20px;
+    background: linear-gradient(90deg, transparent, #B8944A 20%, #d4af5a 50%, #B8944A 80%, transparent);
+    position: relative;
+  }
+  .divider::before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 8px;
+    height: 8px;
+    background: #d4af5a;
+    border-radius: 50%;
+  }
+
+  /* ── Location ── */
+  .location {
+    margin-top: 30px;
+    font-size: 38px;
+    font-weight: 300;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: #ffffff;
+    text-align: center;
+  }
+
+  /* ── 2×2 Stats Grid ── */
+  .stats-grid {
+    margin-top: 50px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    width: 620px;
+    border: 1px solid rgba(184,148,74,0.15);
+    position: relative;
+  }
+
+  /* grid divider lines */
+  .stats-grid::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(to bottom, transparent, rgba(184,148,74,0.25) 20%, rgba(184,148,74,0.25) 80%, transparent);
+  }
+  .stats-grid::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(184,148,74,0.25) 20%, rgba(184,148,74,0.25) 80%, transparent);
+  }
+
+  .stat-box {
+    padding: 32px 36px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  /* left gold accent border */
+  .stat-box::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 40px;
+    background: linear-gradient(to bottom, #d4af5a, #B8944A);
+    border-radius: 2px;
+  }
+
+  .stat-value {
+    font-size: 48px;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1;
+    letter-spacing: 1px;
+  }
+  .stat-value .unit {
+    font-size: 26px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.5);
+    margin-left: 4px;
+  }
+
+  .stat-label {
+    margin-top: 8px;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(184,148,74,0.7);
+  }
+
+  /* ── Swipe hint ── */
+  .swipe-hint {
+    position: absolute;
+    bottom: 48px;
+    right: 80px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 5;
+    opacity: 0.45;
+    animation: nudge 2.5s ease-in-out infinite;
+  }
+  .swipe-hint span {
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #d4af5a;
+  }
+  .swipe-hint svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: #d4af5a;
+    stroke-width: 1.5;
+  }
+  @keyframes nudge {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(8px); }
+  }
+
+  /* ── Extra ambient glow ── */
+  .glow-top {
+    position: absolute;
+    top: -120px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 500px;
+    height: 300px;
+    background: radial-gradient(ellipse, rgba(184,148,74,0.06) 0%, transparent 70%);
+    z-index: 0;
+    pointer-events: none;
+  }
+  .glow-bottom {
+    position: absolute;
+    bottom: -80px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 250px;
+    background: radial-gradient(ellipse, rgba(184,148,74,0.04) 0%, transparent 70%);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* ── Micro-grid accent overlaid on stat area ── */
+  .micro-grid {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+      linear-gradient(to right,  rgba(184,148,74,0.02) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(184,148,74,0.02) 1px, transparent 1px);
+    background-size: 30px 30px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* subtle noise texture */
+  .noise {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    opacity: 0.025;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 200px 200px;
+  }
+</style>
+</head>
+<body>
+
+  <!-- Background layers -->
+  <div class="grid-bg"></div>
+  <div class="noise"></div>
+  <div class="vignette"></div>
+  <div class="glow-top"></div>
+  <div class="glow-bottom"></div>
+
+  <!-- Corner brackets -->
+  <div class="corner-bracket corner-tl"></div>
+  <div class="corner-bracket corner-br"></div>
+
+  <!-- Main content -->
+  <div class="content">
+
+    <!-- Badge -->
+    <div class="badge">
+      <span class="badge-dot"></span>
+      <span id="tipLabel">Na prodaju</span>
+    </div>
+
+    <!-- Logo -->
+    <div class="logo-wrap">
+      <img src="logo-transparent.png" alt="APEX Real Estate">
+    </div>
+
+    <!-- Divider -->
+    <div class="divider"></div>
+
+    <!-- Location -->
+    <div class="location" id="lokacija">Centar, Novi Sad</div>
+
+    <!-- 2×2 Stats Grid -->
+    <div class="stats-grid">
+      <div class="micro-grid"></div>
+
+      <div class="stat-box">
+        <div class="stat-value"><span id="kvadratura">126</span><span class="unit">m²</span></div>
+        <div class="stat-label">Kvadratura</div>
+      </div>
+
+      <div class="stat-box">
+        <div class="stat-value"><span id="sprat">3.</span></div>
+        <div class="stat-label">Sprat</div>
+      </div>
+
+      <div class="stat-box">
+        <div class="stat-value"><span id="sobe">4</span></div>
+        <div class="stat-label">Sobe</div>
+      </div>
+
+      <div class="stat-box">
+        <div class="stat-value" style="font-size: 40px;"><span id="cena">185.000 €</span></div>
+        <div class="stat-label">Cena</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Swipe hint -->
+  <div class="swipe-hint">
+    <span>Prevuci</span>
+    <svg viewBox="0 0 24 24">
+      <polyline points="9 18 15 12 9 6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+
+<script>
+// ═══════════════════════════════════════════
+//  APEX REAL ESTATE – PODACI O NEKRETNINI
+//  Izmeni podatke ispod za novu objavu:
+// ═══════════════════════════════════════════
+
+const nekretnina = {
+    lokacija:    "Centar, Novi Sad",
+    kvadratura:  "126",
+    sprat:       "3.",
+    sobe:        "4",
+    cena:        "185.000 €",
+    tip:         "Na prodaju"
+};
+
+// ═══════════════════════════════════════════
+//  Automatsko popunjavanje – ne menjaj ispod
+// ═══════════════════════════════════════════
+document.getElementById('lokacija').textContent    = nekretnina.lokacija;
+document.getElementById('kvadratura').textContent  = nekretnina.kvadratura;
+document.getElementById('sprat').textContent       = nekretnina.sprat;
+document.getElementById('sobe').textContent        = nekretnina.sobe;
+document.getElementById('cena').textContent        = nekretnina.cena;
+document.getElementById('tipLabel').textContent    = nekretnina.tip;
+</script>
+</body>
+</html>

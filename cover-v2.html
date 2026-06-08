@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1080">
+<title>APEX Real Estate — Cover V2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@100;200;300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+  body{
+    width:1080px;height:1080px;overflow:hidden;
+    font-family:'Outfit',sans-serif;
+    background:#0a0a0a;
+    position:relative;
+  }
+
+  /* ── Grain / noise texture overlay ── */
+  .grain{
+    position:absolute;inset:0;z-index:10;
+    pointer-events:none;opacity:.045;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size:180px 180px;
+  }
+
+  /* ── Subtle radial ambience ── */
+  .ambience{
+    position:absolute;inset:0;z-index:1;
+    background:
+      radial-gradient(ellipse 600px 500px at 50% 38%, rgba(184,148,74,0.06) 0%, transparent 70%),
+      radial-gradient(ellipse 900px 900px at 50% 50%, rgba(184,148,74,0.02) 0%, transparent 80%);
+  }
+
+  /* ── Very subtle corner vignette ── */
+  .vignette{
+    position:absolute;inset:0;z-index:2;
+    background:radial-gradient(ellipse 75% 75% at 50% 50%, transparent 50%, rgba(0,0,0,0.4) 100%);
+  }
+
+  /* ── Main content container ── */
+  .content{
+    position:absolute;inset:0;z-index:5;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+  }
+
+  /* ── "Na prodaju" label ── */
+  .label-sale{
+    font-family:'Outfit',sans-serif;
+    font-weight:300;
+    font-size:13px;
+    letter-spacing:6px;
+    text-transform:uppercase;
+    color:rgba(212,175,90,0.7);
+    margin-bottom:10px;
+  }
+
+  /* ── Location ── */
+  .location{
+    font-family:'Outfit',sans-serif;
+    font-weight:200;
+    font-size:17px;
+    letter-spacing:3.5px;
+    text-transform:uppercase;
+    color:rgba(255,255,255,0.5);
+    margin-bottom:48px;
+  }
+
+  /* ── Logo wrapper with glow ── */
+  .logo-wrap{
+    position:relative;
+    width:380px;height:380px;
+    display:flex;align-items:center;justify-content:center;
+    margin-bottom:50px;
+  }
+  .logo-glow{
+    position:absolute;
+    width:320px;height:320px;
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(184,148,74,0.12) 0%, rgba(184,148,74,0.04) 40%, transparent 70%);
+    filter:blur(30px);
+    top:50%;left:50%;transform:translate(-50%,-50%);
+  }
+  .logo-wrap img{
+    position:relative;z-index:2;
+    width:380px;height:380px;
+    object-fit:contain;
+    filter:drop-shadow(0 0 40px rgba(184,148,74,0.10));
+  }
+
+  /* ── Thin gold divider ── */
+  .divider{
+    width:260px;height:1px;
+    background:linear-gradient(90deg, transparent 0%, rgba(184,148,74,0.35) 25%, rgba(212,175,90,0.5) 50%, rgba(184,148,74,0.35) 75%, transparent 100%);
+    margin-bottom:40px;
+  }
+
+  /* ── Price ── */
+  .price{
+    font-family:'DM Serif Display',serif;
+    font-weight:400;
+    font-size:56px;
+    color:#d4af5a;
+    letter-spacing:2px;
+    margin-bottom:36px;
+    line-height:1;
+    text-shadow:0 0 60px rgba(212,175,90,0.12);
+  }
+
+  /* ── Property details horizontal line ── */
+  .details{
+    display:flex;align-items:center;gap:0;
+    margin-bottom:0;
+  }
+  .detail-item{
+    display:flex;flex-direction:column;align-items:center;
+    padding:0 28px;
+  }
+  .detail-value{
+    font-family:'Outfit',sans-serif;
+    font-weight:400;
+    font-size:18px;
+    color:rgba(255,255,255,0.85);
+    letter-spacing:1px;
+    line-height:1;
+  }
+  .detail-label{
+    font-family:'Outfit',sans-serif;
+    font-weight:200;
+    font-size:10px;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    color:rgba(255,255,255,0.3);
+    margin-top:7px;
+  }
+  .detail-sep{
+    width:1px;height:32px;
+    background:linear-gradient(180deg, transparent 0%, rgba(184,148,74,0.4) 50%, transparent 100%);
+    flex-shrink:0;
+  }
+
+  /* ── Bottom swipe hint ── */
+  .swipe{
+    position:absolute;
+    bottom:44px;left:50%;transform:translateX(-50%);
+    z-index:6;
+    display:flex;align-items:center;gap:8px;
+    font-family:'Outfit',sans-serif;
+    font-weight:300;
+    font-size:11px;
+    letter-spacing:4px;
+    text-transform:uppercase;
+    color:rgba(255,255,255,0.2);
+  }
+  .swipe-arrow{
+    display:inline-block;
+    font-size:13px;
+    color:rgba(212,175,90,0.35);
+    animation:nudge 2.4s ease-in-out infinite;
+  }
+
+  @keyframes nudge{
+    0%,100%{transform:translateX(0);opacity:.35}
+    50%{transform:translateX(5px);opacity:.6}
+  }
+
+  /* ── Tiny bottom line accent ── */
+  .bottom-line{
+    position:absolute;
+    bottom:82px;left:50%;transform:translateX(-50%);
+    width:120px;height:1px;
+    background:linear-gradient(90deg, transparent, rgba(184,148,74,0.15), transparent);
+    z-index:6;
+  }
+</style>
+</head>
+<body>
+
+<!-- Layers -->
+<div class="ambience"></div>
+<div class="vignette"></div>
+<div class="grain"></div>
+
+<!-- Content -->
+<div class="content">
+
+  <div class="label-sale" id="tipLabel">Na prodaju</div>
+  <div class="location" id="lokacijaText">Centar, Novi Sad</div>
+
+  <div class="logo-wrap">
+    <div class="logo-glow"></div>
+    <img src="logo-transparent.png" alt="APEX Real Estate">
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="price" id="cenaText">185.000 €</div>
+
+  <div class="details">
+    <div class="detail-item">
+      <span class="detail-value" id="kvadraturaText">126 m²</span>
+      <span class="detail-label">Kvadratura</span>
+    </div>
+    <div class="detail-sep"></div>
+    <div class="detail-item">
+      <span class="detail-value" id="spratText">3. sprat</span>
+      <span class="detail-label">Sprat</span>
+    </div>
+    <div class="detail-sep"></div>
+    <div class="detail-item">
+      <span class="detail-value" id="sobeText">4 sobe</span>
+      <span class="detail-label">Sobe</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- Bottom accent -->
+<div class="bottom-line"></div>
+<div class="swipe">Swipe <span class="swipe-arrow">›</span></div>
+
+<!-- ============================================
+     EDIT PROPERTY DATA BELOW
+     ============================================ -->
+<script>
+const nekretnina = {
+    lokacija:    "Centar, Novi Sad",
+    kvadratura:  "126",
+    sprat:       "3.",
+    sobe:        "4",
+    cena:        "185.000 €",
+    tip:         "Na prodaju"
+};
+
+// ── Apply data to DOM ──
+document.getElementById("tipLabel").textContent      = nekretnina.tip;
+document.getElementById("lokacijaText").textContent   = nekretnina.lokacija;
+document.getElementById("cenaText").textContent       = nekretnina.cena;
+document.getElementById("kvadraturaText").textContent = nekretnina.kvadratura + " m²";
+document.getElementById("spratText").textContent      = nekretnina.sprat + " sprat";
+document.getElementById("sobeText").textContent       = nekretnina.sobe + " sobe";
+</script>
+
+</body>
+</html>

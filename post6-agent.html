@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POST 6 — Kako prepoznati dobrog agenta | APEX</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C5A059;
+    --gold-dim: #9a8044;
+    --gold-glow: rgba(197,160,89,0.15);
+    --bg: #060606;
+    --bg2: #0D0D0D;
+    --card: #111111;
+    --card-hover: #161616;
+    --border: #1e1e1e;
+    --border-gold: rgba(197,160,89,0.25);
+    --text: #F5F0E8;
+    --text2: #999;
+    --text3: #555;
+    --green: #4ade80;
+    --red: #f87171;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ═══════════════ TOP BAR ═══════════════ */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 24px;
+    background: rgba(6,6,6,0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+  .topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .topbar-back {
+    color: var(--text2);
+    text-decoration: none;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s;
+  }
+  .topbar-back:hover { color: var(--gold); }
+  .topbar-divider {
+    width: 1px;
+    height: 16px;
+    background: var(--border);
+  }
+  .topbar-title {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text);
+  }
+  .topbar-badge {
+    background: var(--gold);
+    color: #000;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 12px;
+    letter-spacing: 1.5px;
+  }
+
+  /* ═══════════════ HERO ═══════════════ */
+  .hero {
+    text-align: center;
+    padding: 50px 20px 30px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 400px;
+    background: radial-gradient(ellipse, rgba(197,160,89,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(197,160,89,0.1);
+    border: 1px solid var(--border-gold);
+    color: var(--gold);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 6px 16px;
+    border-radius: 20px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(32px, 5vw, 48px);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 10px;
+  }
+  .hero h1 .gold { color: var(--gold); }
+  .hero-sub {
+    color: var(--text2);
+    font-size: 15px;
+    max-width: 560px;
+    margin: 0 auto;
+    line-height: 1.5;
+  }
+
+  /* ═══════════════ MAIN LAYOUT ═══════════════ */
+  .main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px 60px;
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 30px;
+    align-items: start;
+  }
+
+  @media (max-width: 860px) {
+    .main { grid-template-columns: 1fr; }
+  }
+
+  /* ═══════════════ CAROUSEL ═══════════════ */
+  .carousel-wrapper {
+    position: sticky;
+    top: 60px;
+  }
+
+  .carousel-phone {
+    background: var(--bg2);
+    border-radius: 24px;
+    border: 2px solid var(--border);
+    overflow: hidden;
+    box-shadow:
+      0 20px 80px rgba(0,0,0,0.5),
+      0 0 60px rgba(197,160,89,0.04);
+  }
+
+  .phone-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .ph-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), #8B6914);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: #000;
+    letter-spacing: 1px;
+  }
+  .ph-info { flex: 1; }
+  .ph-name {
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .ph-location {
+    font-size: 11px;
+    color: var(--text2);
+  }
+  .ph-dots {
+    color: var(--text2);
+    font-size: 18px;
+    letter-spacing: 2px;
+    cursor: pointer;
+  }
+
+  .carousel-area {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    overflow: hidden;
+    background: #000;
+  }
+
+  .carousel-track {
+    display: flex;
+    width: 700%;
+    height: 100%;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .carousel-slide {
+    width: calc(100% / 7);
+    height: 100%;
+    flex-shrink: 0;
+  }
+  .carousel-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Slide counter */
+  .slide-counter {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(8px);
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 12px;
+    z-index: 5;
+  }
+
+  /* Nav arrows */
+  .c-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    transition: all 0.2s;
+    opacity: 0;
+  }
+  .carousel-area:hover .c-nav { opacity: 1; }
+  .c-nav:hover { background: rgba(197,160,89,0.4); border-color: var(--gold); }
+  .c-nav.off { opacity: 0 !important; pointer-events: none; }
+  .c-prev { left: 10px; }
+  .c-next { right: 10px; }
+
+  /* IG Actions bar */
+  .ig-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    font-size: 24px;
+  }
+  .ig-actions-left { display: flex; gap: 14px; }
+  .ig-icon {
+    cursor: pointer;
+    transition: transform 0.15s;
+    user-select: none;
+  }
+  .ig-icon:hover { transform: scale(1.15); }
+  .ig-icon.liked { color: var(--red); }
+
+  /* Dots */
+  .ig-dots {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    padding-bottom: 10px;
+  }
+  .ig-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--text3);
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+  .ig-dot.active {
+    background: #3897f0;
+    width: 6px;
+  }
+
+  /* Likes & preview caption */
+  .ig-likes {
+    padding: 0 14px 4px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .ig-caption-preview {
+    padding: 2px 14px 14px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text2);
+  }
+  .ig-caption-preview strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  /* ═══════════════ RIGHT PANEL ═══════════════ */
+  .panel { display: flex; flex-direction: column; gap: 16px; }
+
+  .panel-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  .panel-card:hover { border-color: rgba(255,255,255,0.08); }
+
+  .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .panel-header h3 {
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Slide info cards */
+  .slide-info-list { padding: 8px; }
+  .si-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .si-item:hover { background: var(--card-hover); }
+  .si-item.active {
+    background: rgba(197,160,89,0.08);
+    border: 1px solid var(--border-gold);
+  }
+  .si-num {
+    background: var(--gold);
+    color: #000;
+    font-size: 11px;
+    font-weight: 700;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .si-title {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+  .si-desc {
+    font-size: 12px;
+    color: var(--text2);
+    line-height: 1.4;
+  }
+
+  /* Caption card */
+  .caption-body { padding: 16px 18px; }
+  .caption-text {
+    font-size: 13.5px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    user-select: all;
+  }
+  .caption-text .gold { color: var(--gold); }
+
+  .hashtags-area {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+  .hashtags-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text3);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .hashtags-text {
+    font-size: 12.5px;
+    color: var(--gold);
+    line-height: 1.6;
+    user-select: all;
+  }
+
+  /* Copy button */
+  .copy-btn {
+    background: var(--gold);
+    color: #000;
+    border: none;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .copy-btn:hover { background: var(--gold-dim); transform: translateY(-1px); }
+  .copy-btn.copied { background: var(--green); }
+
+  /* Tips section */
+  .tips-body { padding: 14px 18px; }
+  .tip-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 6px 0;
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.45;
+  }
+  .tip-icon {
+    color: var(--gold);
+    flex-shrink: 0;
+    font-size: 14px;
+    margin-top: 1px;
+  }
+  .tip-row strong { color: var(--text); }
+
+  /* Post meta */
+  .meta-body { padding: 14px 18px; }
+  .meta-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 7px 0;
+    font-size: 13px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .meta-row:last-child { border: none; }
+  .meta-key { color: var(--text3); }
+  .meta-val { font-weight: 500; }
+  .meta-val.gold { color: var(--gold); }
+
+  /* Download section */
+  .download-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 14px 18px;
+  }
+  .dl-thumb {
+    aspect-ratio: 1;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s;
+  }
+  .dl-thumb:hover { border-color: var(--gold); transform: scale(1.03); }
+  .dl-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .dl-thumb .dl-num {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    background: rgba(0,0,0,0.75);
+    color: var(--gold);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  /* Footer */
+  .page-footer {
+    text-align: center;
+    padding: 30px 20px;
+    border-top: 1px solid var(--border);
+    margin-top: 20px;
+  }
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    letter-spacing: 6px;
+    color: var(--gold);
+    margin-bottom: 4px;
+  }
+  .footer-sub {
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 3px;
+  }
+
+  /* Nav links */
+  .post-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    margin-top: 10px;
+    border-top: 1px solid var(--border);
+  }
+  .post-nav a {
+    color: var(--text2);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    transition: all 0.2s;
+  }
+  .post-nav a:hover {
+    color: var(--gold);
+    border-color: var(--border-gold);
+    background: rgba(197,160,89,0.05);
+  }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .animate-in {
+    animation: fadeUp 0.5s ease-out both;
+  }
+  .delay-1 { animation-delay: 0.1s; }
+  .delay-2 { animation-delay: 0.2s; }
+  .delay-3 { animation-delay: 0.3s; }
+  .delay-4 { animation-delay: 0.4s; }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <a href="index.html" class="topbar-back">← Nazad na feed</a>
+    <div class="topbar-divider"></div>
+    <span class="topbar-title">POST 6 — DOBAR AGENT</span>
+  </div>
+  <span class="topbar-badge">CAROUSEL • 7 SLAJDOVA</span>
+</div>
+
+<!-- HERO -->
+<div class="hero animate-in">
+  <div class="hero-label">📋 EDUKATIVNI CAROUSEL — PAMETNI KUPAC</div>
+  <h1>Kako prepoznati <span class="gold">dobrog agenta?</span></h1>
+  <p class="hero-sub">Dobar agent ne prodaje — on štiti vaše interese. Ovo su 5 znakova da ste našli pravog partnera za kupovinu nekretnine.</p>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- LEFT: CAROUSEL PREVIEW -->
+  <div class="carousel-wrapper animate-in delay-1">
+    <div class="carousel-phone">
+      <div class="phone-header">
+        <div class="ph-avatar">A</div>
+        <div class="ph-info">
+          <div class="ph-name">apexrealestaters</div>
+          <div class="ph-location">Novi Sad, Serbia</div>
+        </div>
+        <div class="ph-dots">•••</div>
+      </div>
+
+      <div class="carousel-area" id="carouselArea">
+        <span class="slide-counter" id="slideCounter">1/7</span>
+
+        <div class="carousel-track" id="track" style="width: 700%;">
+          <div class="carousel-slide" style="width: calc(100% / 7);"><img src="templates/post6_slide1_cover.png" alt="Kako prepoznati dobrog agenta"></div>
+          <div class="carousel-slide" style="width: calc(100% / 7);"><img src="templates/post6_slide2_trziste.png" alt="Poznaje tržište"></div>
+          <div class="carousel-slide" style="width: calc(100% / 7);"><img src="templates/post6_slide3_transparentan.png" alt="Transparentan od starta"></div>
+          <div class="carousel-slide" style="width: calc(100% / 7);"><img src="templates/post6_slide4_dostupan.png" alt="Dostupan kad vam treba"></div>
+          <div class="carousel-slide" style="width: calc(100% / 7);"><img src="templates/post6_slide5_interesi.png" alt="Štiti vaše interese"></div>
+          <div class="carousel-slide" style="width: calc(100% / 7);"><img src="templates/post6_slide6_proces.png" alt="Vodi vas kroz ceo proces"></div>
+          <div class="carousel-slide" style="width: calc(100% / 7);"><img src="templates/post6_slide7_cta.png" alt="Javite nam se"></div>
+        </div>
+
+        <button class="c-nav c-prev off" id="prevBtn" onclick="go(-1)">‹</button>
+        <button class="c-nav c-next" id="nextBtn" onclick="go(1)">›</button>
+      </div>
+
+      <div class="ig-actions">
+        <div class="ig-actions-left">
+          <span class="ig-icon" id="heartIcon" onclick="toggleLike()">♡</span>
+          <span class="ig-icon">💬</span>
+          <span class="ig-icon">➤</span>
+        </div>
+        <span class="ig-icon">🔖</span>
+      </div>
+
+      <div class="ig-dots" id="igDots"></div>
+
+      <div class="ig-likes" id="likesText">198 likes</div>
+      <div class="ig-caption-preview">
+        <strong>apexrealestaters</strong> 📋 Kako prepoznati dobrog agenta za nekretnine? Evo 5 znakova... <span style="color:var(--text3)">više</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="panel">
+
+    <!-- SLIDE INFO -->
+    <div class="panel-card animate-in delay-2">
+      <div class="panel-header">
+        <h3>📑 Slajdovi</h3>
+        <span style="font-size:12px;color:var(--text3)">Klikni da previewuješ</span>
+      </div>
+      <div class="slide-info-list" id="slideInfoList">
+        <div class="si-item active" data-slide="0" onclick="goTo(0)">
+          <span class="si-num">1</span>
+          <div>
+            <div class="si-title">Cover — Kako prepoznati dobrog agenta?</div>
+            <div class="si-desc">Penthouse sa pogledom na Novi Sad.</div>
+          </div>
+        </div>
+        <div class="si-item" data-slide="1" onclick="goTo(1)">
+          <span class="si-num">2</span>
+          <div>
+            <div class="si-title">Poznaje tržište</div>
+            <div class="si-desc">Zna cenu svakog kvarta u gradu.</div>
+          </div>
+        </div>
+        <div class="si-item" data-slide="2" onclick="goTo(2)">
+          <span class="si-num">3</span>
+          <div>
+            <div class="si-title">Transparentan od starta</div>
+            <div class="si-desc">Nikad skriveni troškovi ni provizije.</div>
+          </div>
+        </div>
+        <div class="si-item" data-slide="3" onclick="goTo(3)">
+          <span class="si-num">4</span>
+          <div>
+            <div class="si-title">Dostupan kad vam treba</div>
+            <div class="si-desc">Odgovara brzo. Uvek.</div>
+          </div>
+        </div>
+        <div class="si-item" data-slide="4" onclick="goTo(4)">
+          <span class="si-num">5</span>
+          <div>
+            <div class="si-title">Štiti vaše interese</div>
+            <div class="si-desc">Pregovara u vašu korist. Uvek.</div>
+          </div>
+        </div>
+        <div class="si-item" data-slide="5" onclick="goTo(5)">
+          <span class="si-num">6</span>
+          <div>
+            <div class="si-title">Vodi vas kroz ceo proces</div>
+            <div class="si-desc">Od pretrage do potpisa — uz vas.</div>
+          </div>
+        </div>
+        <div class="si-item" data-slide="6" onclick="goTo(6)">
+          <span class="si-num">7</span>
+          <div>
+            <div class="si-title">Javite nam se</div>
+            <div class="si-desc">📞 064/333/5757</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAPTION -->
+    <div class="panel-card animate-in delay-3">
+      <div class="panel-header">
+        <h3>✍️ Caption</h3>
+        <button class="copy-btn" id="copyBtn" onclick="copyCaption()">📋 Kopiraj</button>
+      </div>
+      <div class="caption-body">
+        <div class="caption-text" id="captionText">🤝 Kako prepoznati DOBROG agenta za nekretnine?
+
+Mnogi misle da su svi agenti isti. Nisu. Razlika između prosečnog i vrhunskog agenta može da vas košta hiljade evra — ili da vam ih uštedi.
+
+Evo 5 znakova da ste našli pravog:
+
+1️⃣ Poznaje tržište
+Ne čita cene sa oglasa — zna realnu vrednost svakog kvarta jer prati tržište svakodnevno. Pita vas šta tražite, ne šta on ima.
+
+2️⃣ Transparentan od starta
+Proviziju, troškove i ceo proces vam objasni pre nego što bilo šta potpišete. Bez sitnog teksta, bez iznenađenja.
+
+3️⃣ Dostupan kad vam treba
+Ne čekate danima na odgovor. Dobar agent poštuje vaše vreme jer zna da je kupovina stana stresna.
+
+4️⃣ Štiti vaše interese
+Nije tu da proda po svaku cenu — nego da vam nađe pravi stan po pravoj ceni. Pregovara za vas, ne protiv vas.
+
+5️⃣ Vodi vas kroz ceo proces
+Od prvog razgledanja, preko pravne provere, do primopredaje ključeva — vi nikad niste sami.
+
+🔖 Sačuvajte ovaj post i pošaljite ga nekom ko traži stan!
+📩 APEX tim je tu za vas od prvog poziva do poslednjeg potpisa. Javite se u DM.
+
+📍 Mičurinova 74, Novi Sad
+📞 064/333/5757
+🌐 apexrealestate.rs
+
+<span class="gold">🔑 Od ideje do ključa.</span></div>
+
+        <div class="hashtags-area">
+          <div class="hashtags-label">Hashtagovi — dodaj u prvi komentar</div>
+          <div class="hashtags-text" id="hashtagsText">#AgentZaNekretnine #KupovinaStana #APEXRealEstate #NoviSad #Nekretnine #DobarAgent #PremiumNekretnine #Transparentnost #NoviSadNekretnine #Poverenje</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SAVETI -->
+    <div class="panel-card animate-in delay-4">
+      <div class="panel-header">
+        <h3>💡 Saveti za objavljivanje</h3>
+      </div>
+      <div class="tips-body">
+        <div class="tip-row">
+          <span class="tip-icon">✦</span>
+          <span>Objavi između <strong>18:00–20:00</strong> (peak engagement za Srbiju)</span>
+        </div>
+        <div class="tip-row">
+          <span class="tip-icon">✦</span>
+          <span>Hashtagove stavi u <strong>prvi komentar</strong>, ne u caption</span>
+        </div>
+        <div class="tip-row">
+          <span class="tip-icon">✦</span>
+          <span>Lokacija: postavi na <strong>"Novi Sad, Serbia"</strong></span>
+        </div>
+        <div class="tip-row">
+          <span class="tip-icon">✦</span>
+          <span>Edukativni carousel = <strong>visok save rate</strong>. Idealan za autoritet.</span>
+        </div>
+        <div class="tip-row">
+          <span class="tip-icon">✦</span>
+          <span>Odmah podeli u <strong>Story</strong> sa "Sačuvajte za kasnije! 🔖"</span>
+        </div>
+        <div class="tip-row">
+          <span class="tip-icon">✦</span>
+          <span>Carousel postovi imaju <strong>3x veći reach</strong> od single image postova</span>
+        </div>
+        <div class="tip-row">
+          <span class="tip-icon">✦</span>
+          <span>Odgovori na svaki komentar u prvih <strong>30 minuta</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- POST META -->
+    <div class="panel-card animate-in delay-4">
+      <div class="panel-header">
+        <h3>📊 Post detalji</h3>
+      </div>
+      <div class="meta-body">
+        <div class="meta-row">
+          <span class="meta-key">Tip</span>
+          <span class="meta-val">Carousel (7 slajdova)</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-key">Format</span>
+          <span class="meta-val">1080 × 1080 px</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-key">Tema</span>
+          <span class="meta-val gold">Edukacija — saveti za kupce</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-key">Pozicija na feedu</span>
+          <span class="meta-val">POST 6</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-key">Predloženi dan</span>
+          <span class="meta-val">Sreda</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-key">Predloženo vreme</span>
+          <span class="meta-val gold">18:30</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- DOWNLOAD THUMBNAILS -->
+    <div class="panel-card animate-in delay-4">
+      <div class="panel-header">
+        <h3>📥 Slajdovi za preuzimanje</h3>
+      </div>
+        <a class="dl-thumb" href="templates/post6_slide1_cover.png" target="_blank">
+          <img src="templates/post6_slide1_cover.png" alt="Slide 1">
+          <span class="dl-num">1</span>
+        </a>
+        <a class="dl-thumb" href="templates/post6_slide2_trziste.png" target="_blank">
+          <img src="templates/post6_slide2_trziste.png" alt="Slide 2">
+          <span class="dl-num">2</span>
+        </a>
+        <a class="dl-thumb" href="templates/post6_slide3_transparentan.png" target="_blank">
+          <img src="templates/post6_slide3_transparentan.png" alt="Slide 3">
+          <span class="dl-num">3</span>
+        </a>
+        <a class="dl-thumb" href="templates/post6_slide4_dostupan.png" target="_blank">
+          <img src="templates/post6_slide4_dostupan.png" alt="Slide 4">
+          <span class="dl-num">4</span>
+        </a>
+        <a class="dl-thumb" href="templates/post6_slide5_interesi.png" target="_blank">
+          <img src="templates/post6_slide5_interesi.png" alt="Slide 5">
+          <span class="dl-num">5</span>
+        </a>
+        <a class="dl-thumb" href="templates/post6_slide6_proces.png" target="_blank">
+          <img src="templates/post6_slide6_proces.png" alt="Slide 6">
+          <span class="dl-num">6</span>
+        </a>
+        <a class="dl-thumb" href="templates/post6_slide7_cta.png" target="_blank">
+          <img src="templates/post6_slide7_cta.png" alt="Slide 7">
+          <span class="dl-num">7</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- NAVIGATION -->
+    <div class="post-nav">
+      <a href="post5-vrednosti.html">← Post 5: Vrednosti</a>
+      <a href="index.html">Feed ⊞</a>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="page-footer">
+  <div class="footer-logo">A P E X</div>
+  <div class="footer-sub">Real Estate • Novi Sad</div>
+</div>
+
+<script>
+let current = 0;
+const total = 7;
+let liked = false;
+let likeCount = 198;
+
+function go(dir) {
+  current += dir;
+  if (current < 0) current = 0;
+  if (current >= total) current = total - 1;
+  updateCarousel();
+}
+
+function goTo(i) {
+  current = i;
+  updateCarousel();
+}
+
+function updateCarousel() {
+  document.getElementById('track').style.transform = `translateX(-${current * (100/6)}%)`;
+  document.getElementById('slideCounter').textContent = `${current+1}/${total}`;
+
+  // Nav buttons
+  document.getElementById('prevBtn').classList.toggle('off', current === 0);
+  document.getElementById('nextBtn').classList.toggle('off', current === total - 1);
+
+  // Dots
+  document.querySelectorAll('.ig-dot').forEach((d, i) => {
+    d.classList.toggle('active', i === current);
+  });
+
+  // Slide info highlight
+  document.querySelectorAll('.si-item').forEach((item, i) => {
+    item.classList.toggle('active', i === current);
+  });
+}
+
+function toggleLike() {
+  const icon = document.getElementById('heartIcon');
+  liked = !liked;
+  if (liked) {
+    icon.textContent = '❤️';
+    icon.classList.add('liked');
+    likeCount++;
+  } else {
+    icon.textContent = '♡';
+    icon.classList.remove('liked');
+    likeCount--;
+  }
+  document.getElementById('likesText').textContent = likeCount + ' likes';
+}
+
+function copyCaption() {
+  const caption = document.getElementById('captionText').innerText;
+  const hashtags = document.getElementById('hashtagsText').innerText;
+  const full = caption + '\n\n' + hashtags;
+  navigator.clipboard.writeText(full).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.innerHTML = '✅ Kopirano!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.innerHTML = '📋 Kopiraj';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+
+// Init dots
+const dotsContainer = document.getElementById('igDots');
+for (let i = 0; i < total; i++) {
+  const dot = document.createElement('div');
+  dot.className = 'ig-dot' + (i === 0 ? ' active' : '');
+  dot.onclick = () => goTo(i);
+  dotsContainer.appendChild(dot);
+}
+
+// Swipe support
+let startX = 0;
+const area = document.getElementById('carouselArea');
+area.addEventListener('touchstart', e => startX = e.touches[0].clientX);
+area.addEventListener('touchend', e => {
+  const diff = startX - e.changedTouches[0].clientX;
+  if (Math.abs(diff) > 40) go(diff > 0 ? 1 : -1);
+});
+</script>
+
+</body>
+</html>

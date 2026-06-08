@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POST 17 — Da li znate? 💡 | APEX</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C5A059;
+    --gold-dim: #9a8044;
+    --bg: #060606;
+    --bg2: #0D0D0D;
+    --card: #111111;
+    --border: #1e1e1e;
+    --border-gold: rgba(197,160,89,0.25);
+    --text: #F5F0E8;
+    --text2: #999;
+    --text3: #555;
+    --green: #4ade80;
+    --red: #f87171;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-system, sans-serif; min-height: 100vh; overflow-x: hidden; }
+
+  .topbar { position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 12px 24px; background: rgba(6,6,6,0.85); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); }
+  .topbar-left { display: flex; align-items: center; gap: 12px; }
+  .topbar-back { color: var(--text2); text-decoration: none; font-size: 13px; display: flex; align-items: center; gap: 6px; transition: color 0.2s; }
+  .topbar-back:hover { color: var(--gold); }
+  .topbar-divider { width: 1px; height: 16px; background: var(--border); }
+  .topbar-title { font-weight: 600; font-size: 13px; }
+  .topbar-badge { background: #fff; color: #000; font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 12px; letter-spacing: 1.5px; }
+
+  .hero { text-align: center; padding: 50px 20px 30px; position: relative; }
+  .hero::before { content: ''; position: absolute; top: -100px; left: 50%; transform: translateX(-50%); width: 600px; height: 400px; background: radial-gradient(ellipse, rgba(255,255,255,0.03) 0%, transparent 70%); pointer-events: none; }
+  .hero-label { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #fff; font-size: 11px; font-weight: 600; padding: 6px 16px; border-radius: 20px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 20px; }
+  .hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(28px, 5vw, 44px); font-weight: 700; line-height: 1.2; margin-bottom: 10px; }
+  .hero h1 .gold { color: var(--gold); }
+  .hero-sub { color: var(--text2); font-size: 15px; max-width: 560px; margin: 0 auto; line-height: 1.5; }
+
+  .main { max-width: 1100px; margin: 0 auto; padding: 0 20px 60px; display: grid; grid-template-columns: 1fr 400px; gap: 30px; align-items: start; }
+  @media (max-width: 860px) { .main { grid-template-columns: 1fr; } }
+
+  .carousel-wrapper { position: sticky; top: 60px; }
+  .carousel-phone { background: var(--bg2); border-radius: 24px; border: 2px solid var(--border); overflow: hidden; box-shadow: 0 20px 80px rgba(0,0,0,0.5); }
+  .phone-header { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--border); background: var(--bg); }
+  .ph-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--gold), #8B6914); display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-size: 11px; font-weight: 700; color: #000; }
+  .ph-info { flex: 1; }
+  .ph-name { font-size: 13px; font-weight: 600; }
+  .ph-location { font-size: 11px; color: var(--text2); }
+  .ph-dots { color: var(--text2); font-size: 18px; letter-spacing: 2px; }
+
+  .post-image-area { width: 100%; aspect-ratio: 1; overflow: hidden; background: #000; }
+  .post-image-area img { width: 100%; height: 100%; object-fit: cover; }
+
+  .ig-actions { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; font-size: 24px; }
+  .ig-actions-left { display: flex; gap: 14px; }
+  .ig-icon { cursor: pointer; transition: transform 0.15s; user-select: none; }
+  .ig-icon:hover { transform: scale(1.15); }
+  .ig-icon.liked { color: var(--red); }
+  .ig-likes { padding: 0 14px 4px; font-size: 13px; font-weight: 600; }
+  .ig-caption-preview { padding: 2px 14px 14px; font-size: 13px; line-height: 1.5; color: var(--text2); }
+  .ig-caption-preview strong { color: var(--text); font-weight: 600; }
+
+  .panel { display: flex; flex-direction: column; gap: 16px; }
+  .panel-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; transition: border-color 0.3s; }
+  .panel-card:hover { border-color: rgba(255,255,255,0.08); }
+  .panel-header { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; border-bottom: 1px solid var(--border); }
+  .panel-header h3 { font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+
+  .caption-body { padding: 16px 18px; }
+  .caption-text { font-size: 13.5px; line-height: 1.7; white-space: pre-wrap; user-select: all; }
+  .hashtags-area { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+  .hashtags-label { font-size: 10px; font-weight: 600; color: var(--text3); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 6px; }
+  .hashtags-text { font-size: 12.5px; color: var(--gold); line-height: 1.6; user-select: all; }
+
+  .copy-btn { background: var(--gold); color: #000; border: none; font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 8px; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; display: flex; align-items: center; gap: 5px; }
+  .copy-btn:hover { background: var(--gold-dim); }
+  .copy-btn.copied { background: var(--green); }
+
+  .tips-body { padding: 14px 18px; }
+  .tip-row { display: flex; align-items: flex-start; gap: 10px; padding: 6px 0; font-size: 13px; color: var(--text2); line-height: 1.45; }
+  .tip-icon { color: var(--gold); flex-shrink: 0; font-size: 14px; margin-top: 1px; }
+  .tip-row strong { color: var(--text); }
+
+  .meta-body { padding: 14px 18px; }
+  .meta-row { display: flex; justify-content: space-between; padding: 7px 0; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .meta-row:last-child { border: none; }
+  .meta-key { color: var(--text3); }
+  .meta-val { font-weight: 500; }
+  .meta-val.gold { color: var(--gold); }
+
+  /* More facts section */
+  .facts-body { padding: 14px 18px; }
+  .fact-item { padding: 12px 14px; margin-bottom: 8px; background: rgba(255,255,255,0.03); border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: all 0.2s; }
+  .fact-item:hover { background: rgba(197,160,89,0.06); border-color: var(--border-gold); }
+  .fact-item:last-child { margin-bottom: 0; }
+  .fact-number { font-size: 28px; font-weight: 800; color: var(--gold); margin-bottom: 4px; }
+  .fact-text { font-size: 13px; color: var(--text2); line-height: 1.4; }
+
+  .page-footer { text-align: center; padding: 30px 20px; border-top: 1px solid var(--border); margin-top: 20px; }
+  .footer-logo { font-family: 'Playfair Display', serif; font-size: 20px; letter-spacing: 6px; color: var(--gold); margin-bottom: 4px; }
+  .footer-sub { font-size: 11px; color: var(--text3); letter-spacing: 3px; }
+
+  .post-nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; margin-top: 10px; border-top: 1px solid var(--border); }
+  .post-nav a { color: var(--text2); text-decoration: none; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border); transition: all 0.2s; }
+  .post-nav a:hover { color: var(--gold); border-color: var(--border-gold); background: rgba(197,160,89,0.05); }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  .animate-in { animation: fadeUp 0.5s ease-out both; }
+  .delay-1 { animation-delay: 0.1s; } .delay-2 { animation-delay: 0.2s; } .delay-3 { animation-delay: 0.3s; } .delay-4 { animation-delay: 0.4s; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <a href="index.html" class="topbar-back">← Nazad na feed</a>
+    <div class="topbar-divider"></div>
+    <span class="topbar-title">POST 17 — DA LI ZNATE?</span>
+  </div>
+  <span class="topbar-badge">QUICK FACT • SINGLE IMAGE</span>
+</div>
+
+<div class="hero animate-in">
+  <div class="hero-label">💡 DA LI ZNATE? — QUICK FACT</div>
+  <h1>Jedan broj. <span class="gold">Jedna istina.</span></h1>
+  <p class="hero-sub">Minimalistički, bold, shareable. Potpuno drugačiji format od carousela — brz za konzumaciju, lak za deljenje. Ovo je recurring serija.</p>
+</div>
+
+<div class="main">
+
+  <div class="carousel-wrapper animate-in delay-1">
+    <div class="carousel-phone">
+      <div class="phone-header">
+        <div class="ph-avatar">A</div>
+        <div class="ph-info">
+          <div class="ph-name">apexrealestaters</div>
+          <div class="ph-location">Novi Sad, Serbia</div>
+        </div>
+        <div class="ph-dots">•••</div>
+      </div>
+      <div class="post-image-area">
+        <img src="templates/post17_daliznate.png" alt="Da li znate? 67%">
+      </div>
+      <div class="ig-actions">
+        <div class="ig-actions-left">
+          <span class="ig-icon" id="heartIcon" onclick="toggleLike()">♡</span>
+          <span class="ig-icon">💬</span>
+          <span class="ig-icon">➤</span>
+        </div>
+        <span class="ig-icon">🔖</span>
+      </div>
+      <div class="ig-likes" id="likesText">321 likes</div>
+      <div class="ig-caption-preview">
+        <strong>apexrealestaters</strong> 💡 Da li ste znali ovaj podatak o kupovini stana u Novom Sadu? <span style="color:var(--text3)">više</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+
+    <!-- BUDUĆI FAKTOVI -->
+    <div class="panel-card animate-in delay-2">
+      <div class="panel-header">
+        <h3>🔢 Budući faktovi za seriju</h3>
+        <span style="font-size:11px;color:var(--text3)">Recurring rubrika</span>
+      </div>
+      <div class="facts-body">
+        <div class="fact-item" style="background: rgba(197,160,89,0.08); border-color: var(--border-gold);">
+          <div class="fact-number">67%</div>
+          <div class="fact-text">kupaca u Novom Sadu bira stan u prečniku od 2km od posla ← <strong style="color:var(--green)">OVAJ POST</strong></div>
+        </div>
+        <div class="fact-item">
+          <div class="fact-number">11</div>
+          <div class="fact-text">stanova u proseku obiđe kupac pre konačne odluke</div>
+        </div>
+        <div class="fact-item">
+          <div class="fact-number">42 dana</div>
+          <div class="fact-text">prosečno vreme od pretrage do potpisivanja ugovora</div>
+        </div>
+        <div class="fact-item">
+          <div class="fact-number">3x</div>
+          <div class="fact-text">brže se prodaje stan sa profesionalnim fotografijama</div>
+        </div>
+        <div class="fact-item">
+          <div class="fact-number">+15%</div>
+          <div class="fact-text">veća cena nekretnine na uglovitoj poziciji u bloku</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAPTION -->
+    <div class="panel-card animate-in delay-3">
+      <div class="panel-header">
+        <h3>✍️ Caption</h3>
+        <button class="copy-btn" id="copyBtn" onclick="copyCaption()">📋 Kopiraj</button>
+      </div>
+      <div class="caption-body">
+        <div class="caption-text" id="captionText">💡 Da li ste znali?
+
+67% kupaca u Novom Sadu bira stan u prečniku od 2km od svog radnog mesta.
+
+Lokacija nije samo "lep kvart" — to je koliko ste blizu svakodnevnom životu. Posao, škola, prodavnica, kafić.
+
+Zato je izbor lokacije PRVI korak, ne poslednji. 📍
+
+Koji vam je kvart idealan? Pišite ⬇️
+
+📩 Ili nam pišite u DM — pomažemo vam da nađete pravi. 🔑</div>
+
+        <div class="hashtags-area">
+          <div class="hashtags-label">Hashtagovi — dodaj u prvi komentar</div>
+          <div class="hashtags-text" id="hashtagsText">#DaLiZnate #NoviSad #Nekretnine #APEXRealEstate #KupovinaStana #Lokacija #FunFact #RealEstateTips</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SAVETI -->
+    <div class="panel-card animate-in delay-4">
+      <div class="panel-header">
+        <h3>💡 Saveti</h3>
+      </div>
+      <div class="tips-body">
+        <div class="tip-row">
+          <span class="tip-icon">✦</span>
+          <span><strong>Recurring serija</strong> — objavi "Da li znate?" svake 2 nedelje</span>
+        </div>
+        <div class="tip-row">
+          <span class="tip-icon">✦</span>
+          <span>Minimalistički vizual je <strong>upadljiv</strong> u feedu punom slika</span>
+        </div>
+        <div class="tip-row">
+          <span class="tip-icon">✦</span>
+          <span>Caption <strong>završi pitanjem</strong> za komentare</span>
+        </div>
+        <div class="tip-row">
+          <span class="tip-icon">✦</span>
+          <span>Share-uj na Story sa <strong>"Swipe up da saznate više"</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- META -->
+    <div class="panel-card animate-in delay-4">
+      <div class="panel-header"><h3>📊 Post detalji</h3></div>
+      <div class="meta-body">
+        <div class="meta-row"><span class="meta-key">Tip</span><span class="meta-val">Single Image (Tipografski)</span></div>
+        <div class="meta-row"><span class="meta-key">Format</span><span class="meta-val">1080 × 1080 px</span></div>
+        <div class="meta-row"><span class="meta-key">Tema</span><span class="meta-val gold">Quick Fact / Engagement</span></div>
+        <div class="meta-row"><span class="meta-key">Pozicija</span><span class="meta-val">POST 17</span></div>
+        <div class="meta-row"><span class="meta-key">Cilj</span><span class="meta-val gold">Shares + Comments</span></div>
+      </div>
+    </div>
+
+    <div class="post-nav">
+      <a href="post15-cekam-pad.html">← Prethodni post (16)</a>
+      <a href="post18-pogled.html" style="color:var(--gold)">Sledeći post (18) →</a>
+    </div>
+  </div>
+</div>
+
+<div class="page-footer">
+  <div class="footer-logo">A P E X</div>
+  <div class="footer-sub">Real Estate • Novi Sad</div>
+</div>
+
+<script>
+  let liked = false;
+  function toggleLike() {
+    liked = !liked;
+    const h = document.getElementById('heartIcon');
+    const l = document.getElementById('likesText');
+    if(liked) { h.innerText = '♥'; h.classList.add('liked'); l.innerText = '322 likes'; h.style.transform = 'scale(1.3)'; setTimeout(() => h.style.transform = 'scale(1)', 200); }
+    else { h.innerText = '♡'; h.classList.remove('liked'); l.innerText = '321 likes'; }
+  }
+  function copyCaption() {
+    const c = document.getElementById('captionText').innerText;
+    const h = document.getElementById('hashtagsText').innerText;
+    navigator.clipboard.writeText(c + '\n\n' + h).then(() => {
+      const btn = document.getElementById('copyBtn');
+      btn.innerHTML = '✅ Kopirano!'; btn.classList.add('copied');
+      setTimeout(() => { btn.innerHTML = '📋 Kopiraj'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+</script>
+</body>
+</html>
