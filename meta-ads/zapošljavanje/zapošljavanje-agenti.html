@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APEX - Zapošljavanje Kreativa - Agenti za nekretnine</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #0a0a0a;
+            font-family: 'Inter', sans-serif;
+            padding: 20px;
+        }
+
+        .creative-container {
+            width: 1080px;
+            height: 1080px;
+            position: relative;
+            overflow: hidden;
+            background: #0a0a0a;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top section - dark with text */
+        .top-section {
+            position: relative;
+            width: 100%;
+            padding: 50px 60px 40px;
+            background: #0a0a0a;
+            z-index: 10;
+            flex-shrink: 0;
+        }
+
+        /* APEX logo top-left */
+        .top-logo {
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-block {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-logo-text {
+            font-family: 'Inter', sans-serif;
+            font-weight: 800;
+            font-size: 24px;
+            letter-spacing: 8px;
+            color: #ffffff;
+        }
+
+        .top-logo-sub {
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            font-size: 10px;
+            letter-spacing: 6px;
+            color: #c9a84c;
+            margin-top: -2px;
+        }
+
+        /* Badge */
+        .top-badge {
+            background: linear-gradient(135deg, #c9a84c, #d4b45a);
+            color: #0a0a0a;
+            font-family: 'Inter', sans-serif;
+            font-weight: 800;
+            font-size: 12px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            padding: 9px 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .top-badge .dot {
+            width: 7px;
+            height: 7px;
+            background: #0a0a0a;
+            border-radius: 50%;
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.7); }
+        }
+
+        /* Main heading text */
+        .pre-heading {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-weight: 500;
+            font-size: 26px;
+            color: #d4b45a;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .main-heading {
+            font-family: 'Inter', sans-serif;
+            font-weight: 900;
+            font-size: 56px;
+            line-height: 1.05;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            margin-bottom: 18px;
+        }
+
+        .main-heading .highlight {
+            color: #d4b45a;
+        }
+
+        /* Feature pills */
+        .feature-pills {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .pill {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 8px 18px;
+            background: rgba(201, 168, 76, 0.1);
+            border: 1px solid rgba(201, 168, 76, 0.3);
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.8);
+            letter-spacing: 0.5px;
+        }
+
+        .pill .icon {
+            color: #d4b45a;
+            font-size: 14px;
+        }
+
+        /* Photo section - takes remaining space */
+        .photo-section {
+            position: relative;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .bg-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Subtle gradient on top edge of photo to blend with dark section */
+        .photo-overlay-top {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background: linear-gradient(
+                180deg,
+                rgba(10, 10, 10, 0.8) 0%,
+                rgba(10, 10, 10, 0.0) 100%
+            );
+            z-index: 2;
+        }
+
+        /* CTA overlay on photo */
+        .photo-overlay-bottom {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(
+                0deg,
+                rgba(10, 10, 10, 0.95) 0%,
+                rgba(10, 10, 10, 0.7) 50%,
+                rgba(10, 10, 10, 0.0) 100%
+            );
+            z-index: 2;
+        }
+
+        .cta-area {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            z-index: 10;
+            text-align: center;
+            padding: 0 60px 20px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 20px 65px;
+            background: linear-gradient(
+                135deg,
+                #c9a84c 0%,
+                #d4b45a 40%,
+                #e6c96e 60%,
+                #d4b45a 100%
+            );
+            color: #0a0a0a;
+            font-family: 'Inter', sans-serif;
+            font-weight: 800;
+            font-size: 20px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 6px 30px rgba(201, 168, 76, 0.35);
+        }
+
+        .cta-sub {
+            display: block;
+            margin-top: 12px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.45);
+            letter-spacing: 1px;
+        }
+
+        /* Bottom bar */
+        .bottom-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 65px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+            background: rgba(8, 8, 8, 0.98);
+            border-top: 2px solid;
+            border-image: linear-gradient(
+                90deg,
+                transparent 0%,
+                #c9a84c 20%,
+                #d4b45a 50%,
+                #c9a84c 80%,
+                transparent 100%
+            ) 1;
+        }
+
+        .bottom-info {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .bottom-logo {
+            font-family: 'Inter', sans-serif;
+            font-weight: 800;
+            font-size: 18px;
+            letter-spacing: 6px;
+            color: #ffffff;
+        }
+
+        .bottom-divider {
+            width: 1.5px;
+            height: 24px;
+            background: linear-gradient(180deg, #c9a84c, #8a7030);
+        }
+
+        .bottom-tagline {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-weight: 400;
+            font-size: 17px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Gold accent line between text and photo */
+        .gold-line {
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(
+                90deg,
+                #c9a84c 0%,
+                #d4b45a 30%,
+                #e6c96e 50%,
+                #d4b45a 70%,
+                #c9a84c 100%
+            );
+            flex-shrink: 0;
+        }
+
+        /* Variant Controls */
+        .variant-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.92);
+            padding: 20px;
+            border-radius: 12px;
+            z-index: 1000;
+            color: white;
+            font-size: 14px;
+            max-width: 340px;
+            border: 1px solid rgba(201, 168, 76, 0.2);
+        }
+
+        .variant-controls h3 {
+            margin-bottom: 15px;
+            color: #d4a843;
+            font-size: 16px;
+        }
+
+        .variant-btn {
+            display: block;
+            width: 100%;
+            padding: 10px 15px;
+            margin: 5px 0;
+            background: rgba(212, 168, 67, 0.1);
+            border: 1px solid rgba(212, 168, 67, 0.25);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            text-align: left;
+            transition: all 0.2s;
+        }
+
+        .variant-btn:hover, .variant-btn.active {
+            background: rgba(212, 168, 67, 0.3);
+            border-color: #d4a843;
+        }
+
+        .variant-btn.active {
+            box-shadow: 0 0 10px rgba(212, 168, 67, 0.3);
+        }
+
+        .hide-controls {
+            display: block;
+            margin-top: 12px;
+            padding: 8px;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.6);
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 12px;
+        }
+
+        @media print {
+            .variant-controls { display: none; }
+            body { padding: 0; background: white; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Variant Controls -->
+    <div class="variant-controls" id="controls">
+        <h3>⚡ Varijante teksta</h3>
+        <button class="variant-btn active" onclick="setVariant(1)">
+            1. TRAŽIMO LICENCIRANOG AGENTA → Prijavi se
+        </button>
+        <button class="variant-btn" onclick="setVariant(2)">
+            2. Varijanta sa drugim pills-ovima
+        </button>
+        <button class="variant-btn" onclick="setVariant(3)">
+            3. Varijanta sa naglaskom na zaradu
+        </button>
+        <button class="hide-controls" onclick="toggleControls()">Sakrij/Prikaži kontrole</button>
+    </div>
+
+    <!-- Main Creative 1080x1080 -->
+    <div class="creative-container" id="creative">
+
+        <!-- TOP: Dark section with text -->
+        <div class="top-section">
+            <div class="top-logo">
+                <div class="logo-block">
+                    <div class="top-logo-text">APEX</div>
+                    <div class="top-logo-sub">REAL ESTATE</div>
+                </div>
+                <div class="top-badge" id="badge">
+                    <span class="dot"></span>
+                    ZAPOŠLJAVAMO
+                </div>
+            </div>
+
+            <div class="pre-heading" id="preText">Pridruži se našem timu</div>
+            <div class="main-heading" id="mainText">
+                TRAŽIMO<br>
+                <span class="highlight">LICENCIRANOG AGENTA</span><br>
+                ZA NEKRETNINE
+            </div>
+
+            <div class="feature-pills" id="pills">
+                <div class="pill"><span class="icon">✓</span> Visoke provizije</div>
+                <div class="pill"><span class="icon">✓</span> Marketing podrška</div>
+                <div class="pill"><span class="icon">✓</span> Fleksibilno radno vreme</div>
+            </div>
+        </div>
+
+        <!-- Gold accent line -->
+        <div class="gold-line"></div>
+
+        <!-- BOTTOM: Photo section -->
+        <div class="photo-section">
+            <img class="bg-image" src="office_bg.png" alt="Real estate office team">
+            <div class="photo-overlay-top"></div>
+            <div class="photo-overlay-bottom"></div>
+
+            <div class="cta-area">
+                <div class="cta-button" id="ctaText">PRIJAVI SE →</div>
+                <span class="cta-sub" id="ctaSub">Popunite formu • Javimo se u roku od 24h</span>
+            </div>
+        </div>
+
+        <!-- Bottom Bar -->
+        <div class="bottom-bar">
+            <div class="bottom-info">
+                <div class="bottom-logo">APEX</div>
+                <div class="bottom-divider"></div>
+                <div class="bottom-tagline" id="taglineText">Gradimo tim koji gradi budućnost</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const variants = {
+            1: {
+                pre: 'Pridruži se našem timu',
+                main: 'TRAŽIMO<br><span class="highlight">LICENCIRANOG AGENTA</span><br>ZA NEKRETNINE',
+                badge: '<span class="dot"></span> ZAPOŠLJAVAMO',
+                pills: [
+                    { icon: '✓', text: 'Visoke provizije' },
+                    { icon: '✓', text: 'Marketing podrška' },
+                    { icon: '✓', text: 'Fleksibilno radno vreme' }
+                ],
+                cta: 'PRIJAVI SE →',
+                ctaSub: 'Popunite formu • Javimo se u roku od 24h',
+                tagline: 'Gradimo tim koji gradi budućnost'
+            },
+            2: {
+                pre: 'Tvoje mesto je ovde',
+                main: 'TRAŽIMO<br><span class="highlight">LICENCIRANOG AGENTA</span><br>ZA NEKRETNINE',
+                badge: '<span class="dot"></span> OTVORENA POZICIJA',
+                pills: [
+                    { icon: '💼', text: 'Iskustvo u prodaji' },
+                    { icon: '📈', text: 'Rast karijere' },
+                    { icon: '🤝', text: 'Jak tim' }
+                ],
+                cta: 'POŠALJI CV →',
+                ctaSub: 'Popunite formu • Brz odgovor garantovan',
+                tagline: 'Vaša karijera, naš prioritet'
+            },
+            3: {
+                pre: 'Napreduj sa nama',
+                main: 'TRAŽIMO<br><span class="highlight">LICENCIRANOG AGENTA</span><br>ZA NEKRETNINE',
+                badge: '<span class="dot"></span> KARIJERA',
+                pills: [
+                    { icon: '⭐', text: 'Premium agencija' },
+                    { icon: '💰', text: 'Nadprosečna zarada' },
+                    { icon: '🏆', text: 'Obuke i treninzi' }
+                ],
+                cta: 'APLICIRAJ SADA →',
+                ctaSub: 'Popunite formu • Bez obaveza',
+                tagline: 'Apex Real Estate — Gde profesionalci rastu'
+            }
+        };
+
+        function setVariant(num) {
+            const v = variants[num];
+            document.getElementById('preText').textContent = v.pre;
+            document.getElementById('mainText').innerHTML = v.main;
+            document.getElementById('badge').innerHTML = v.badge;
+            document.getElementById('ctaText').textContent = v.cta;
+            document.getElementById('ctaSub').textContent = v.ctaSub;
+            document.getElementById('taglineText').textContent = v.tagline;
+            
+            const pillsContainer = document.getElementById('pills');
+            pillsContainer.innerHTML = v.pills.map(p => 
+                `<div class="pill"><span class="icon">${p.icon}</span> ${p.text}</div>`
+            ).join('');
+            
+            document.querySelectorAll('.variant-btn').forEach((btn, i) => {
+                btn.classList.toggle('active', i === num - 1);
+            });
+        }
+
+        function toggleControls() {
+            const controls = document.getElementById('controls');
+            const btns = controls.querySelectorAll('.variant-btn, h3');
+            btns.forEach(el => {
+                el.style.display = el.style.display === 'none' ? '' : 'none';
+            });
+        }
+    </script>
+
+</body>
+</html>
